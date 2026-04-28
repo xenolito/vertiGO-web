@@ -9,6 +9,7 @@ h3,
 h4,
 h5 {
 	@apply font-[500];
+	font-family: var(--def-heading-font-family);
 }
 
 h1,
@@ -101,10 +102,10 @@ h3 {
 		font-style: normal;
 		/* text-transform: uppercase; */
 		color: var(--main-color);
-		-webkit-text-fill-color: transparent;
+		/* -webkit-text-fill-color: transparent;
 		-webkit-background-clip: text;
 		background-clip: text;
-		background-image: var(--heading-highlight-grad);
+		background-image: var(--heading-highlight-grad); */
 
 		.word {
 			overflow: visible;

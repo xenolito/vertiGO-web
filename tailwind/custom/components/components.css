@@ -30,6 +30,8 @@
 	/* --main-color: rgb(196, 228, 86); */
 	/* --main-color: #c3ff00; */
 	--main-color: #fc1a57;
+	--main-color: #ff6700;
+	--secondary-color: #0047ba;
 	--main-color-darker: #7a9913;
 	--bg-light: rgb(246, 243, 239);
 
@@ -110,7 +112,7 @@
 	--txt-color-dark: white;
 
 	/* --heading-color: rgb(85, 60, 27); */
-	--heading-color: var(--main-color);
+	--heading-color: var(--secondary-color);
 	--heading-color-dark: var(--main-color);
 	--line-color: var(--heading-color);
 	--line-color-dark: var(--heading-color-dark);
@@ -378,7 +380,7 @@
 	/* --def-font-family: "Outfit", Helvetica, Arial, sans-serif;
 	--def-heading-font-family: "Outfit", Helvetica, Arial, sans-serif; */
 	--def-font-family: "Quicksand", Helvetica, Arial, sans-serif;
-	--def-heading-font-family: "Quicksand", Helvetica, Arial, sans-serif;
+	--def-heading-font-family: "Montserrat", Helvetica, Arial, sans-serif;
 	--txt-slider-heading: "Montserrat", Helvetica, Arial, sans-serif;
 	--def-txt-color: #404040;
 	--txt-heading-color: #3a3a3a;

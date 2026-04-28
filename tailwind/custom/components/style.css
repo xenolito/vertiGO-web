@@ -1174,6 +1174,12 @@ body.single-evento {
 			/* background-image: linear-gradient(to top, rgb(255, 0, 0), rgb(252, 0, 141) 100%); */
 		}
 	}
+
+	.company-logo {
+		svg {
+			max-width: 400px;
+		}
+	}
 }
 
 body.home .sections .pct-section#documentos {

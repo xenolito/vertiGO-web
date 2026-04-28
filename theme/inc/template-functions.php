@@ -4,24 +4,62 @@
  * Functions which enhance the theme by hooking into WordPress
  *
  * @package pictau_tw
+ * @version 2.2.0;
+ * @forked original project from:  https://underscoretw.com/
+ * @author modified and adapted by: Pictau, @xenolito, oscar.rey.tajes@gmail.com
+ *
  */
 
 /*------------------------------------------------------------------------------------------------------*\
 						//!WP MAIL FROM CUSTOMIZATION AND MAINTENANCE PAGE INFO
 \*------------------------------------------------------------------------------------------------------*/
-function custom_wp_mail_from_name()
-{
-	return 'EXSEL';
-}
-function custom_wp_mail_address()
-{
-	return 'info@exsel.net';
-}
-add_filter('wp_mail_from', 'custom_wp_mail_address');
-add_filter('wp_mail_from_name', 'custom_wp_mail_from_name');
+// Filters only run when values are explicitly saved in the Customizer.
+add_action('init', function () {
+	$site_name     = get_theme_mod('pictau_site_name', '');
+	$contact_email = get_theme_mod('pictau_contact_email', '');
 
-update_option('pictau_custom_wp_mail_from_name', custom_wp_mail_from_name());
-update_option('pictau_custom_wp_mail_address', custom_wp_mail_address());
+	if ($site_name !== '') {
+		add_filter('wp_mail_from_name', function () use ($site_name) {
+			return $site_name;
+		});
+	}
+
+	if ($contact_email !== '') {
+		add_filter('wp_mail_from', function () use ($contact_email) {
+			return $contact_email;
+		});
+	}
+});
+
+
+/*------------------------------------------------------------------------------------------------------*
+            //! DISABLE SERACH FEATURES
+\*------------------------------------------------------------------------------------------------------*/
+function disable_search_query($query, $error = true)
+{
+	if (is_admin()) {
+		return;
+	}
+
+	if (isset($_GET['s']) && empty($_GET['s'])) {
+		wp_redirect(home_url());
+		exit;
+	}
+
+	if ($query->is_search()) {
+		$query->is_search = false;
+		$query->query_vars['s'] = false;
+		$query->query['s'] = false;
+
+		if ($error) {
+			$query->is_404 = true;
+		}
+	}
+}
+add_action('parse_query', 'disable_search_query');
+add_filter('get_search_form', '__return_null');
+
+
 
 
 //! MEDIA CHANGES: DISABLE "Organize my files by month and year"
@@ -39,7 +77,6 @@ function my_custom_fonts()
 }
 
 
-
 //! Default image size when inserted using a image block
 function default_image_size_bloq($settings, $context)
 {
@@ -50,48 +87,6 @@ function default_image_size_bloq($settings, $context)
 }
 
 add_filter('block_editor_settings_all', 'default_image_size_bloq', 10, 2);
-
-
-/*------------------------------------------------------------------------------------------------------*
-//! REST API - FORCE REQUIRE AUTHENTICATION to expose the API
-\*------------------------------------------------------------------------------------------------------*/
-// Disable some endpoints for unauthenticated users
-add_filter('rest_endpoints', 'disable_default_endpoints');
-function disable_default_endpoints($endpoints)
-{
-	$endpoints_to_remove = array(
-		'/oembed/1.0',
-		'/wp/v2',
-		'/wp/v2/media',
-		'/wp/v2/types',
-		'/wp/v2/statuses',
-		'/wp/v2/taxonomies',
-		'/wp/v2/tags',
-		'/wp/v2/users',
-		'/wp/v2/comments',
-		'/wp/v2/settings',
-		'/wp/v2/themes',
-		'/wp/v2/blocks',
-		'/wp/v2/oembed',
-		'/wp/v2/posts',
-		'/wp/v2/pages',
-		'/wp/v2/block-renderer',
-		'/wp/v2/search',
-		'/wp/v2/categories'
-	);
-
-	if (! is_user_logged_in()) {
-		foreach ($endpoints_to_remove as $rem_endpoint) {
-			// $base_endpoint = "/wp/v2/{$rem_endpoint}";
-			foreach ($endpoints as $maybe_endpoint => $object) {
-				if (stripos($maybe_endpoint, $rem_endpoint) !== false) {
-					unset($endpoints[$maybe_endpoint]);
-				}
-			}
-		}
-	}
-	return $endpoints;
-}
 
 
 /**
@@ -472,7 +467,7 @@ if (!class_exists('Main_Nav_Walker')) {
 
 // ! CUSTOMIZER
 
-function customize_theme_header_behavior($wp_customize)
+function customize_theme_pictau($wp_customize)
 {
 	// Add Panel
 	$wp_customize->add_panel('PICTAU', array(
@@ -480,6 +475,40 @@ function customize_theme_header_behavior($wp_customize)
 		// 'description'	=> '<div class="description-pictau-panel"><img src="https://www.pictau.com/xen_media//logo-login-pictau.png" /><p>Pictau panel description</p></div>',
 		'priority'		=> '360'
 	));
+
+	// Site information — client name and contact email (used by mail filters and plugins)
+	$wp_customize->add_section('pictau_site_info', array(
+		'title'    => esc_html__('Site Information', 'pictau'),
+		'panel'    => 'PICTAU',
+		'priority' => 10,
+	));
+
+	$wp_customize->add_setting('pictau_site_name', array(
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_text_field',
+		'transport'         => 'refresh',
+	));
+
+	$wp_customize->add_control('pictau_site_name', array(
+		'label'       => esc_html__('Client name (wp_mail_from_name)', 'pictau'),
+		'description' => esc_html__('Used as the sender name in WordPress emails. Available via get_theme_mod(\'pictau_site_name\').', 'pictau'),
+		'section'     => 'pictau_site_info',
+		'type'        => 'text',
+	));
+
+	$wp_customize->add_setting('pictau_contact_email', array(
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_email',
+		'transport'         => 'refresh',
+	));
+
+	$wp_customize->add_control('pictau_contact_email', array(
+		'label'       => esc_html__('Contact email (wp_mail_from)', 'pictau'),
+		'description' => esc_html__('Used as the sender address in WordPress emails. Available via get_theme_mod(\'pictau_contact_email\').', 'pictau'),
+		'section'     => 'pictau_site_info',
+		'type'        => 'email',
+	));
+
 
 	// Add Header Behaviour Section
 	$wp_customize->add_section('main_header_behavior', array(
@@ -503,6 +532,8 @@ function customize_theme_header_behavior($wp_customize)
 			'normal-header'	=> __('normal', 'pictau'),
 		)
 	));
+
+
 
 	// Add Header Width Definition
 	$wp_customize->add_section('main_header_width', array(
@@ -537,7 +568,10 @@ function customize_theme_header_behavior($wp_customize)
 
 	// $default_lang = function_exists('pll_the_languages') ? pll_default_language('locale') : '';
 
-	if (function_exists('pll_the_languages')) {
+	if (function_exists('pll_the_languages') && function_exists('pll_languages_list')) {
+		/**
+		 * @disregard P1009 Undefined type
+		 */
 		$languages = pll_languages_list(array(
 			'fields'	=> 'locale'
 		));
@@ -579,9 +613,141 @@ function customize_theme_header_behavior($wp_customize)
 			'type'    	=> 'textarea',
 		));
 	}
+
+	// Add Catalog Section (only if product_category taxonomy exists)
+	if (taxonomy_exists('product_category')) {
+		$wp_customize->add_section('pictau_catalog', array(
+			'title' => __('Catálogo', 'pictau'),
+			'panel' => 'PICTAU',
+		));
+
+		$wp_customize->add_setting('catalog_swatches_limit', array(
+			'default'           => 10,
+			'sanitize_callback' => 'absint',
+		));
+
+		$wp_customize->add_control('catalog_swatches_limit', array(
+			'label'       => __('Máximo de swatches por card de producto', 'pictau'),
+			'description' => __('Si hay más variantes de color, se muestra un indicador "+N". Mínimo 1.', 'pictau'),
+			'section'     => 'pictau_catalog',
+			'settings'    => 'catalog_swatches_limit',
+			'type'        => 'number',
+			'input_attrs' => array('min' => 1, 'max' => 30),
+		));
+	}
+
+	// Add Google Tag Manager Section (GTM)
+	$wp_customize->add_section('google_tag_manager', array(
+		'title' => 'Google Tag Manager (GTM)',
+		'panel'	=> 'PICTAU'
+	));
+
+	$wp_customize->add_setting(
+		'GTM_ID',
+		array('default' => get_theme_mod('GTM_ID') ? get_theme_mod('GTM_ID') : '')
+	);
+
+	$wp_customize->add_control('GTM_ID', array(
+		'label'   	=> __('GTM ID', 'pictau'),
+		'section' 	=> 'google_tag_manager',
+		'settings'	=> 'GTM_ID',
+		'description'	=> 'Enter your Google Tag Manager ID here (e.g., GTM-XXXXXXX).<br><br>⚠️ This will load GTM script on all your pages!<br>If you are using a GDPR cookie consent plugin, make sure to configure it properly to avoid loading GTM before user consent (Use your cookie consent plugin to load GTM instead?).',
+		'type'    	=> 'text',
+	));
 }
 
-add_action('customize_register', 'customize_theme_header_behavior');
+add_action('customize_register', 'customize_theme_pictau');
+
+
+//! Add mobile meta "theme-color" to CUSTOMIZER
+function color_customizer($wp_customize)
+{
+	$wp_customize->add_section('mobile_theme_color', array(
+		'title' => 'Theme Color Mobile',
+		'panel'	=> 'PICTAU',
+		'description' => __('This color will be used for the mobile "theme-color" meta tag<br><strong>Note:</strong> This will only affect mobile browsers that support this feature.<br><br>If you\'re using Contact Form 7, this color will be used for the html email templates on the header and footer sections. 🙌', 'pictau'),
+	));
+
+
+
+	$wp_customize->add_setting(
+		'colorThemeMobile',
+		array(
+			'default' => '#000000',
+			'sanitize_callback' => 'sanitize_hex_color',
+			// 'capability' => 'edit_theme_options'
+		)
+	);
+
+	$wp_customize->add_control(
+		new WP_Customize_Color_Control(
+			$wp_customize,
+			'colorThemeMobile',
+			array(
+				'label' => __('Color Section Title', 'pictau'),
+				'section' => 'mobile_theme_color',
+				'settings' => 'colorThemeMobile'
+			)
+		)
+	);
+}
+
+add_action('customize_register', 'color_customizer');
+
+//! CUSTOM FAVICON: Allows to use svg images as favicon without cropping
+function favicon_customizer($wp_customize)
+{
+	// Add a section
+	$wp_customize->add_section('favicon_customizer', array(
+		'title'    => __('Favicon SVG ⚠️', 'pictau'),
+		'priority' => 30,
+		'panel'	=> 'PICTAU',
+		'description' => __('This image will be used as favicon. It will be nice if you use "@media (prefers-color-scheme: dark)" to adjust the svg colors for dark mode.<br><hr>⚠️ <strong>Beware!</strong> Safari does not support SVG favicons. I you use this feature, make sure to upload a .png version with the same filename for Safari Browsers.<br><br>It is also a good practice to use a "favicon.ico" (32bit, transparent background) on the root of your WP folder for admin pages. <br><br>Check support at <a href="https://caniuse.com/link-icon-svg" target="_blank">https://caniuse.com/link-icon-svg</a>', 'pictau'),
+	));
+
+	// Add a setting to store the image URL
+	$wp_customize->add_setting('favicon_svg', array(
+		'default'           => '',
+		'sanitize_callback' => 'esc_url_raw',
+	));
+
+	// Add the image control
+	$wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'favicon_svg', array(
+		'label'    => __('Selecciona tu imagen', 'pictau'),
+		'section'  => 'favicon_customizer',
+		'settings' => 'favicon_svg',
+	)));
+}
+add_action('customize_register', 'favicon_customizer');
+
+function add_favicon_to_head()
+{
+	$favicon_svg = get_theme_mod('favicon_svg');
+	$favicon_no_extension = preg_replace('/\.[^.]+$/', '', $favicon_svg);
+
+
+	if ($favicon_svg) {
+		// remove_action('wp_head', 'wp_site_icon', 99);
+		// remove_action('admin_head', 'wp_site_icon', 99);
+
+		echo '<link rel="icon" type="image/svg+xml" href="' . esc_url($favicon_no_extension) . '.svg">';
+		echo '<link rel="icon" type="image/png" href="' . esc_url($favicon_no_extension) . '.png?v=3.1" sizes="32x32" />';
+	}
+}
+add_action('wp_head', 'add_favicon_to_head');
+// add_action( 'admin_head', 'add_favicon_to_head' );
+
+
+function theme_color()
+{
+	$color = get_theme_mod('colorThemeMobile', 'transparent');
+	if ($color) {
+		echo '<meta name="theme-color" content="' . $color . '" />';
+	}
+}
+
+add_action('wp_head', 'theme_color');
+
 
 
 
@@ -634,19 +800,14 @@ add_filter('body_class', 'body_default_theme_class');
 function pictau_social($atts)
 {
 
-	extract(shortcode_atts(array(), $atts));
+	$atts = shortcode_atts(array(), $atts);
 
 	$output = '<div class="social-icons">';
 
-	$output .= '<a class="social-item" href="https://www.facebook.com/exselUnderwriting" aria-label="facebook" target="_blank"><i class="pcticon-facebook"></i></a>';
+	$output .= '<a class="social-item" href="https://www.linkedin.com/company/enterprise-quality-management/" aria-label="linkedin" target="_blank"><i class="pcticon-linkedin"></i></a>';
+	$output .= '<a class="social-item" href="https://twitter.com/enterpriseqm" aria-label="twitter/X" target="_blank"><i class="pcticon-twitter-x"></i></a>';
+	$output .= '<a class="social-item" href="https://www.youtube.com/channel/UC4Q7JlsKFLvU7SomNtoUhOA" aria-label="facebook" target="_blank"><i class="pcticon-youtube"></i></a>';
 
-	$output .= '<a class="social-item" href="https://twitter.com/exsel_uwa" aria-label="twitter/X" target="_blank"><i class="pcticon-twitter-x"></i></a>';
-
-	$output .= '<a class="social-item" href="https://www.linkedin.com/company/10506418" aria-label="linkedin" target="_blank"><i class="pcticon-linkedin"></i></a>';
-
-	$output .= '<a class="social-item" href="https://www.youtube.com/channel/UCVhiaOSryo-UaWD8-x8waAg" aria-label="facebook" target="_blank"><i class="pcticon-youtube"></i></a>';
-
-	$output .= '<a class="social-item" href="https://www.instagram.com/exsel_uwa" aria-label="instagram" target="_blank"><i class="pcticon-instagram"></i></a>';
 
 	$output .= '</div>';
 
@@ -658,29 +819,37 @@ function pictau_social($atts)
 add_shortcode('social', 'pictau_social');
 
 
+
 //! Copyright FOOTER inc. PICTAU logo
 
 function pictau_copyright($atts)
 {
 	// ob_start();
 
-	extract(shortcode_atts(array(), $atts));
+	$atts = shortcode_atts(array(), $atts);
 
-	$output = '<div class="pct-copyright">';
+	// Obtener ID del logo
+	$custom_logo_id = get_theme_mod('custom_logo');
 
-	$output .= do_shortcode('[social]');
+	// Obtener la URL del logo
+	$logo_url = wp_get_attachment_image_url($custom_logo_id, 'full');
+	$logo_filename = basename($logo_url); //! restore this for default theme logo
+	// $logo_filename = 'logo_PDJIT.svg';
 
-	$output .= '	<div class="copy">
-									<ul>';
-	$output .= '			<li>© ' . apply_shortcodes('[myYear]') . ' EXSEL</li>';
-	// $output .= '			<li>' . strtoupper(get_bloginfo( 'name' )) . '</li>';
-	$output .= '			<li><a href="/aviso-legal">Aviso legal</a></li>';
-	$output .= '			<li><a href="#gdpr_cookie_modal">Privacidad y Cookies</a></li>';
-	$output .= '			<li><a class="pictau-logo" href="https://www.pictau.com" target="_blank">' . __('Powered by', 'pictau') . ' PICTAU &nbsp;<span class="pcticon-pictau-logo"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span></a></li>';
-	$output .= '		</ul>
-								</div>';
 
-	$output .= '</div>';
+
+	$output = '	<div class="pct-copyright">
+								<div class="company-logo">' . do_shortcode('[svg filename="' . $logo_filename . '"]') . '
+								</div>
+								<div>' .
+		do_shortcode('[social]')
+		. '</div>
+								<div class="copy">
+									<ul>
+										<li>© ' . apply_shortcodes('[myYear]') . ' ' . get_bloginfo('name') . '</li>
+									</ul>
+								</div>
+							</div>';
 
 
 	echo $output;
@@ -710,15 +879,55 @@ add_shortcode('myPics', 'myImageLink');
 function myImageSRCsets($atts)
 {
 
-	extract(shortcode_atts(array(
+	$atts = shortcode_atts(array(
 		"id" 		=> '',
 		"size"		=> 'full'
-	), $atts));
+	), $atts);
+	$id = $atts['id'];
+	$size = $atts['size'];
 
 	return wp_get_attachment_image($id, $size);
 }
 add_shortcode('myImg', 'myImageSRCsets');
 // end shortcode images
+
+// Show post featured image
+function featured_image_b($atts)
+{
+	$atts = shortcode_atts(array(
+		"id" 		=> '',
+		"size"		=> 'full'
+	), $atts);
+
+	// Si el post tiene imagen destacada
+	if (has_post_thumbnail()) {
+		$image_html = get_the_post_thumbnail(null, $atts['size']);
+		return '<figure>' . $image_html . '</figure>';
+	}
+
+	return '⛔️ No featured image found';
+}
+add_shortcode('featured-b-image', 'featured_image_b');
+
+// Show post featured image
+function featured_image($atts)
+{
+	$atts = shortcode_atts(array(
+		"id" 		=> '',
+		"size"		=> 'full'
+	), $atts);
+
+	// Si el post tiene imagen destacada
+	if (has_post_thumbnail()) {
+		return pictau_post_thumbnail('is-bg only-img');
+	}
+
+	return '⛔️ No featured image found';
+}
+add_shortcode('featured-image', 'featured_image');
+
+
+
 
 
 
@@ -745,8 +954,23 @@ function myYearCredits()
 {
 	return date('Y');
 }
-
 add_shortcode('myYear', 'myYearCredits');
+
+function currentDate($atts = [])
+{
+	$atts = shortcode_atts(array(
+		"format"	=> 'd-m-Y',
+	), $atts);
+	$format = $atts['format'];
+
+	$currentDate = date_i18n($format);
+	return $currentDate;
+}
+add_shortcode('current-date', 'currentDate');
+
+
+
+
 
 function siteDomainURL()
 {
@@ -754,23 +978,6 @@ function siteDomainURL()
 }
 
 add_shortcode('siteURL', 'siteDomainURL');
-
-
-// function pictau_custom_icon($atts, $content) {
-//     extract(shortcode_atts(array(
-// 	"icon" 		=> '',
-// 	"class"		=> '',
-// 	), $atts));
-
-// 	$ico_svg = '<svg class="pct_custom_icon '. $class .'" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><use xlink:href="'. PICTAU_ICON_SPRITE .'#'. $icon .'"></use></svg>';
-
-// 	return $ico_svg;
-
-// //	return PICTAU_ICON_SPRITE . '|' . get_stylesheet_directory_uri();
-// }
-
-// add_shortcode( 'pct_icon', 'pictau_custom_icon' );
-
 
 
 //! PÁGINA DE LOGIN: CORREJIMOS LOGO Y LINKS */
@@ -820,6 +1027,49 @@ function rememberme_checked()
 }
 
 
+/*------------------------------------------------------------------------------------------------------*
+//! REST API - FORCE REQUIRE AUTHENTICATION to expose the API
+\*------------------------------------------------------------------------------------------------------*/
+// Disable some endpoints for unauthenticated users
+// add_filter( 'rest_endpoints', 'disable_default_endpoints' );
+function disable_default_endpoints($endpoints)
+{
+	$endpoints_to_remove = array(
+		'/oembed/1.0',
+		// '/wp/v2',
+		'/wp/v2/media',
+		'/wp/v2/types',
+		'/wp/v2/statuses',
+		'/wp/v2/taxonomies',
+		'/wp/v2/tags',
+		'/wp/v2/users',
+		'/wp/v2/comments',
+		'/wp/v2/settings',
+		'/wp/v2/themes',
+		'/wp/v2/blocks',
+		'/wp/v2/oembed',
+		'/wp/v2/posts',
+		'/wp/v2/pages',
+		'/wp/v2/block-renderer',
+		'/wp/v2/search',
+		'/wp/v2/categories'
+	);
+
+	if (! is_user_logged_in()) {
+		foreach ($endpoints_to_remove as $rem_endpoint) {
+			// $base_endpoint = "/wp/v2/{$rem_endpoint}";
+			foreach ($endpoints as $maybe_endpoint => $object) {
+				if (stripos($maybe_endpoint, $rem_endpoint) !== false) {
+					unset($endpoints[$maybe_endpoint]);
+				}
+			}
+		}
+	}
+	return $endpoints;
+}
+
+
+
 
 
 /*------------------------------------------------------------------------------------------------------*
@@ -844,30 +1094,16 @@ function favicon_theme()
 // ! Add head's link rel preload for fonts located at [theme/fonts] dir...
 function preload_fonts()
 {
-
 	$fontsDir = get_template_directory_uri() . '/fonts';
 
-	$themeDir = get_template_directory() . '/fonts/';
-	$files = function_exists('list_files') ? list_files($themeDir, 1) : scandir($themeDir, 1);
-
-	$font_extensions = array('woff2', 'woff', 'ttf', 'otf');
-
-	foreach ($files as $file) {
-		$filename  = basename($file);
-		$extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-
-		if (! in_array($extension, $font_extensions, true)) {
-			continue;
-		}
-
-		echo '<link rel="preload" as="font" href="' . esc_url($fontsDir . '/' . $filename) . '" crossorigin />';
+	foreach (glob(get_template_directory() . '/fonts/*') as $file) {
+		echo '<link rel="preload" as="font" href="' . $fontsDir . '/' . basename($file) . '" crossorigin />';
 	}
-	?>
-
-	<?php
 }
 
 add_action('wp_head', 'preload_fonts');
+
+
 
 
 //! Enable shortcodes for menu navigation items (used on "navigation label")
@@ -875,6 +1111,11 @@ if (!has_filter('wp_nav_menu', 'do_shortcode')) {
 	add_filter('wp_nav_menu', 'shortcode_unautop');
 	add_filter('wp_nav_menu', 'do_shortcode', 11);
 }
+
+// Remove empty <p> tags generated by wpautop around shortcode blocks in the_content
+add_filter('the_content', function ($content) {
+	return preg_replace('/<p>(\s|&nbsp;)*<\/p>/i', '', $content);
+}, 20);
 
 
 
@@ -939,22 +1180,6 @@ add_filter('widget_text', 'do_shortcode');
 
 
 
-
-/*------------------------------------------------------------------------------------------------------*\
-
-						//!ELIMINAMOS GOOGLE MAPS .js PARA AQUELLAS PÁGINAS QUE NO TENGAN MAPA
-
-\*------------------------------------------------------------------------------------------------------*/
-
-// add_action( 'wp_print_scripts', 'my_deregister_javascript', 100 );
-
-// function my_deregister_javascript() {
-// 	$request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-
-// 	if( !(strpos($request_uri,'/contacto') !== false) ) {
-// 		wp_deregister_script( 'google_map_api' );
-// 	}
-// }
 
 
 /*------------------------------------------------------------------------------------------------------*\
@@ -1046,6 +1271,7 @@ add_filter('wp_check_filetype_and_ext', function ($data, $file, $filename, $mime
 function cc_mime_types($mimes)
 {
 	$mimes['svg'] = 'image/svg+xml';
+	$mimes['riv'] = 'application/octet-stream';
 	return $mimes;
 }
 add_filter('upload_mimes', 'cc_mime_types');
@@ -1093,6 +1319,10 @@ function get_svg($filename, $attributes = array())
 	// If there are attributes to add, add them.
 	if (! empty($attributes)) {
 		foreach ($attributes as $attribute => $value) {
+			if (null === $value || '' === $value || false === $value) {
+				continue;
+			}
+
 			// If the attribute is 'class', add the class to the SVG file without overwriting the existing classes.
 			if ('class' === $attribute) {
 				$update_svg->add_class($value);
@@ -1114,16 +1344,28 @@ function get_svg($filename, $attributes = array())
 
 function inline_svg($atts, $content)
 {
-	extract(shortcode_atts(array(
+	$atts = shortcode_atts(array(
 		"filename"	=> null,
 		"class"			=> '',
 		"width"			=> '',
-		"height"		=> ''
-	), $atts));
+		"height"		=> '',
+		"figure"		=> false
+	), $atts);
+	$filename = $atts['filename'];
+	$class = $atts['class'];
+	$figure = $atts['figure'];
+	unset($atts['filename'], $atts['figure']);
 
 	if (!$filename) return;
 
-	$uploadsDir = wp_upload_dir()['path'];
+	if ($figure) {
+		// Si viene el atributo "figure" como true, entonces envolvemos el SVG en un <figure> con las clases indicadas
+		$css_class = $class ? 'class="' .  esc_attr($class) . '"' : '';
+		unset($atts['class']);
+		$svg = get_svg($filename, $atts);
+
+		return '<figure ' . $css_class . '>' . $svg . '</figure>';
+	}
 
 	$svg = get_svg($filename, $atts);
 	return $svg;
@@ -1135,6 +1377,8 @@ add_shortcode('svg', 'inline_svg');
 
 
 //! AUTOMATIC REPLACE svg sources for img blocks on page content
+
+
 function wp_svg_inline_replacer($matches)
 {
 	$src = $matches[1];
@@ -1147,12 +1391,16 @@ function wp_svg_inline_replacer($matches)
 
 	$svg = get_svg($matches[1]);
 
+	// Limpieza básica de seguridad
+	$svg = preg_replace('/<script.*?<\/script>/is', '', $svg);
+	$svg = preg_replace('/on\w+="[^"]*"/i', '', $svg);
+
 	return $svg;
 }
 
 function wp_svg_inline_filter($content)
 {
-	global $post;
+	// global $post;
 	$pattern = '/<img[^>]*\bsrc="([^"]*\.svg)"[^>]*>/i';
 
 	$content = preg_replace_callback($pattern, 'wp_svg_inline_replacer', $content);
@@ -1160,6 +1408,7 @@ function wp_svg_inline_filter($content)
 }
 
 add_filter('the_content', 'wp_svg_inline_filter');
+
 
 
 //!  CHECK IF REQUIRED PLUGIN IS INSTALLED AND ACTIVATED
@@ -1183,7 +1432,7 @@ add_filter('edit_post_link', 'wpse_remove_edit_post_link');
 function pct_options($atts)
 {
 
-	extract(shortcode_atts(array(), $atts));
+	$atts = shortcode_atts(array(), $atts);
 
 
 	return get_option('large_size_w');
@@ -1257,27 +1506,39 @@ add_shortcode('dark-switcher', 'darkmode_switcher');
  */
 function my_register_scripts()
 {
+	// wp_register_script(
+	// 	'anim-bg-canvas',
+	// 	get_stylesheet_directory_uri() . '/js/animBg.js',
+	// 	[],
+	// 	'1.0.0',
+	// 	true
+	// );
+
 	wp_register_script(
-		'anim-bg-canvas',
-		get_stylesheet_directory_uri() . '/js/animBg.js',
+		'rive-player',
+		get_stylesheet_directory_uri() . '/js/rivePlayer.js',
 		[],
 		'1.0.0',
 		true
 	);
 }
-// add_action( 'wp_enqueue_scripts', 'my_register_scripts' );
+add_action('wp_enqueue_scripts', 'my_register_scripts');
 
 
 //! ANIMATED BACKGROUNDS CANVAS PIXI
 function animated_bg_canvas($atts = [], $content = '')
 {
 
-	extract(shortcode_atts(array(
+	$atts = shortcode_atts(array(
 		"color" 		=> '#ff0000',
 		"origin"		=> false,
 		"speed"			=> false,
 		"autopause"	=> 1
-	), $atts));
+	), $atts);
+	$color = $atts['color'];
+	$origin = $atts['origin'];
+	$speed = $atts['speed'];
+	$autopause = $atts['autopause'];
 
 
 	// Enqueue our script.
@@ -1290,14 +1551,14 @@ function animated_bg_canvas($atts = [], $content = '')
 	// Output shortcode.
 	return '<canvas class="anim-bg" data-has_abg="{\'colors\': { \'a\' : \'' . $color . '\'}' . $hasOrigin . $customSpeed . ',\'autopause\':' . $autopause . '}"></canvas>';
 }
-add_shortcode('anim-bg', 'animated_bg_canvas');
+// add_shortcode('anim-bg', 'animated_bg_canvas');
 
 
-//! ANIMATED BACKGROUNDS CANVAS PIXI
+//! VIDEO AS BACKGROUND
 function video_as_background($atts = [], $content = '')
 {
 
-	extract(shortcode_atts(array(
+	$atts = shortcode_atts(array(
 		"overlayopacity" 	=> false,
 		"src"							=> false,
 		"mobile"			=> false,
@@ -1307,7 +1568,15 @@ function video_as_background($atts = [], $content = '')
 		"callback"				=> false,
 		"align"						=> 'center'
 
-	), $atts));
+	), $atts);
+	$overlayopacity = $atts['overlayopacity'];
+	$src = $atts['src'];
+	$mobile = $atts['mobile'];
+	$poster = $atts['poster'];
+	$noautoplay = $atts['noautoplay'];
+	$webm = $atts['webm'];
+	$callback = $atts['callback'];
+	$align = $atts['align'];
 
 	$isAutoplay = $noautoplay ? '' : 'autoplay';
 	$hasOverlayOpacity = $overlayopacity ? 'data-overlayopacity="' . $overlayopacity . '"' : '';
@@ -1378,134 +1647,122 @@ function preload_videos()
 //! POLYLANG UTILS: get the provided slug for the current language
 function getLocalizedSlug($slug)
 {
-	if (function_exists('pll_the_languages')) {
-		$localizedSlug = get_the_permalink(pll_get_post(get_page_by_path($slug)->ID));
+	if (function_exists('pll_the_languages') && function_exists('pll_get_post')) {
+		/**
+		 * @disregard P1009 Undefined type
+		 */
+		$page = get_page_by_path($slug);
+		if (!$page) {
+			return '';
+		}
+
+		$localizedSlug = get_the_permalink(pll_get_post($page->ID));
 		return $localizedSlug;
 	}
 	return '';
 }
 
 //! LANGUAGE SWITCHER
+function pl_get_current_lang()
+{
+	if (function_exists('pll_current_language')) {
+		return pll_current_language();
+	}
+	return null;
+}
+
+function get_lang_flag_src($lang)
+{
+
+	return wp_upload_dir()['baseurl'] . '/flag-' . $lang . '.svg';
+
+
+	if (function_exists('pll_the_languages')) {
+		$languages = pll_the_languages(array('raw' => 1));
+		foreach ($languages as $key => $value) {
+			if ($value['slug'] === $lang) {
+				return $value['flag'];
+			}
+		}
+		// return '🇪🇸';
+	}
+}
 
 function language_switcher($atts = [], $content = '')
 {
 
-	extract(shortcode_atts(array(
+	$atts = shortcode_atts(array(
 		"flag" 	=> false,
-	), $atts));
+		"ui"		=> false // < false | horizontal | vertical (default === false) >
+	), $atts);
+	$flag = $atts['flag'];
+	$ui = $atts['ui'];
 
-	$output = '<div class="lang_switcher">';
+	$isHorizontal = ($ui === 'horizontal') ? 'horizontal' : '';
+
+	$output = '<div class="lang-switcher ' . $isHorizontal . '">';
 
 	if (function_exists('pll_the_languages')) {
 
-		$output .= '<label class="relative">';
-		$output .= '	<input type="checkbox" name="lang-switch" class="lang-switch sr-only">';
-		$output .= '	<div class="switcher-container">';
-		$output .= '		<span class="switch-head"></span>';
-		$output .= '		<div class="lang-list">';
+		// $output .= '<div class="current-lang">'. pl_get_current_lang() . ' --- <img width="30" height="30" src="' . get_lang_flag_src(pl_get_current_lang()) . '" /></div>';
+
+		$output .= '<div class="current-lang"><img class="lang-flag" width="30" height="30" alt="flag-' . pl_get_current_lang() . '" src="' . get_lang_flag_src(pl_get_current_lang()) . '" />';
+
+		if ($isHorizontal) {
+			$output .= '<svg class="icon icon-tabler icon-tabler-chevron-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M9 6l6 6l-6 6"></path></svg>';
+		}
+
+		$output .= '</div>';
+
+		// $output .= '<label class="relative">';
+		// $output .= '	<input type="checkbox" name="lang-switch" class="lang-switch sr-only">';
+		// $output .= '	<div class="switcher-container">';
+		// $output .= '		<span class="switch-head"></span>';
+		// $output .= '		<div class="lang-list">';
 
 		$languages = pll_the_languages(array('raw' => 1));
 
 		$numItems = count($languages);
 		$i = 0;
 
-		foreach ($languages as $key => $value) {
-			$current_lang = $value['current_lang'] ? 'current' : '';
-			$output .= '<div class="lang-code ' . $current_lang  . '"><a href="' . $value['url'] . '">';
-			$output .= $value['slug'];
-			$output .= '</a></div>';
+		if ($numItems > 1) {
+			$output .= '<div class="lang-list"><ul>';
 
-			// if( ++$i === $numItems) {
-			// 	$output .= '<-- last one';
-			// }
-			// else {
-			// 	$output .= '<-- no last one';
-			// }
+			foreach ($languages as $key => $value) {
+				// $current_lang = $value['current_lang'] ? 'current' : '';
+				$current_lang = $value['current_lang'] ? true : false;
+
+				// print_r($value);
+
+				if (! $current_lang) {
+					$output .= '<li class="lang-item lang-code-' . $value['slug'] . '">';
+					$output .= '	<a  href="' . $value['url'] . '">';
+					$output .= '		<img class="lang-flag" width="30" height="30" alt="flag-' . $value['name'] . '" src="' . get_lang_flag_src($value['slug']) . '" />';
+					$output .= '		<div class="lang-name">' . $value['name'] . '</div>';
+					// $output .= ' (' . $value['slug'] . ')';
+					$output .= '	</a>';
+					$output .= '</li>';
+				}
+			}
+
+			$output .= '</ul></div>';
 		}
 
-		// $output .= '<span class="switch-head"></span>';
 
-		$output .= '		</div>';
-		$output .= '	</div>';
-		$output .= '<span class="sr-only">Switch language to ES / EN</span>';
-		$output .= '</label>';
-		$output .= '</div>';
+
+
+		// $output .= '		</div>';
+		// $output .= '	</div>';
+		// $output .= '<span class="sr-only">Switch language to ES / EN</span>';
+		// $output .= '</label>';
+
 	}
+
+	$output .= '</div>';
 	// Output shortcode.
 	return $output;
 }
 add_shortcode('lang-switcher', 'language_switcher');
-
-
-//! AREAS 'ONLY FEATURED'  --> MEGAMNEU DESKTOP
-function show_areas_featured($atts = [], $content = '')
-{
-
-	extract(shortcode_atts(array(
-		"limit" 	=> 0,
-	), $atts));
-
-	$output = '<div class="areas-featured-grid">';
-	// $output .= '<h2>AREAS FEATURED</h2><br>';
-
-	$params = array(
-		'limit' => $limit,
-	);
-
-	$pods = pods('area', $params);
-
-	if ($pods->total() > 0) {
-		while ($pods->fetch()) {
-			$featured = $pods->field('featured')[0];
-			$nombre = $pods->field('nombre');
-			$link = $pods->field('permalink');
-			$featured_img = $pods->field('featured_image._src');
-			$description = $pods->field('description');
-
-			if ($featured) {
-				$output .= '<div class="area-featured-item">';
-				$output .= '	<a href="' . $link . '">';
-				$output .= '		<div class="os-window">';
-				$output .= '			<div class="screen-container">';
-				$output .= '				<img class="os-window-screen" src="' . $featured_img . '" alt="' . $nombre . '">';
-				$output .= '			</div>';
-				$output .= '			<img class="os-window-topbar" src="' . wp_upload_dir()['baseurl'] . '/window_topbar.svg" alt="os-window">';
-				$output .= '		</div>';
-				$output .= '		<div class="area-featured-content">';
-				$output .= '			<h3>' . $nombre . '</h3>';
-				$output .= '			<p>' . $description . '</p>';
-				$output .= '		</div>';
-				$output .= '	</a>';
-				$output .= '</div>';
-
-				// $output .= 'nombre: ' . $nombre . '<br> | link: ' . $link . '<br> | featured img: ' . $featured_img . '<br> | description: ' . $description . '<br><hr><br>';
-				// $output .= '</div>';
-			}
-		}
-	}
-	$output .= '</div>';
-	return $output;
-}
-add_shortcode('areas-featured', 'show_areas_featured');
-
-
-
-
-
-
-//! GET AREAS LIST FOR MOBILE MENU (with icon svg inline)
-function areas_mobile($atts = [], $content = '')
-{
-
-	extract(shortcode_atts(array(
-		"limit" 	=> 0,
-	), $atts));
-
-	$output = do_shortcode('[pods name="area" template="Mobile menu all Solutions Areas list"]');
-
-	return wp_svg_inline_filter($output);
-}
-add_shortcode('mobile-areas', 'areas_mobile');
 
 
 //! UTILITY: function that extracts width and height values from an <img> tag string
@@ -1526,62 +1783,15 @@ function extractWidthHeight($str)
 	return $result;
 }
 
-//! LOGOS CLIENTES CPT: cliente
-
-function show_customer_logos($atts = [], $content = '')
-{
-
-	extract(shortcode_atts(array(
-		"limit" 	=> 0,
-	), $atts));
-
-	$output = '';
-	// $output .= '<h2>AREAS FEATURED</h2><br>';
-
-	$params = array(
-		'limit' => $limit,
-		'orderby' => 't.post_title ASC'
-
-	);
-
-	$pods = pods('cliente', $params);
-
-	if ($pods->total() > 0) {
-		while ($pods->fetch()) {
-			$imgSrc = $pods->field('logotipo._src.full');
-			$WH = extractWidthHeight($pods->field('logotipo._img'));
-			$imgWidth = $WH['width'];
-			$imgHeight = $WH['height'];
-			$nombre = $pods->field('nombre');
-			$cat = (gettype($pods->field('cliente_category')) !== 'array') ? '' : $pods->field('cliente_category')[0]['name'];
-
-			// $output .= print_r($cat);
-
-			if ($cat && $imgWidth && $imgHeight && $imgSrc) {
-				$output .= '<figure class="wp-block-image size-large" data-filter="' . $cat . '">';
-				// $output .= $pods->field('logotipo._img');
-				$output .= '	<img fetchpriority="high" decoding="async" width="' . $imgWidth . '" height="' . $imgHeight . '" src="' . $imgSrc . '" alt="' . $nombre . '" class="wp-image-2469">';
-				$output .= '</figure>';
-			}
-
-
-			// $output .= $img;
-
-		}
-	}
-
-	return $output;
-}
-add_shortcode('logos-clientes', 'show_customer_logos');
-
 
 //! INLINE SVG WHEN TAG "<img>" found with attribute "src" containing any reference to a .svg source. Depends on "wp_svg_inline_filter()" function.
 function img_to_svg($atts = [], $content = '')
 {
 
-	extract(shortcode_atts(array(
+	$atts = shortcode_atts(array(
 		"limit" 	=> 0,
-	), $atts));
+	), $atts);
+	$limit = $atts['limit'];
 
 	return wp_svg_inline_filter($content);
 }
@@ -1591,7 +1801,10 @@ add_shortcode('svg-inline', 'img_to_svg');
 //! REGISTER TRANSLATABLE STRING @POLYLANG FOR TRANSLATION
 
 add_action('init', function () {
-	if (function_exists('pll_the_languages')) {
+	if (function_exists('pll_the_languages') && function_exists('pll_register_string')) {
+		/**
+		 * @disregard P1009 Undefined type
+		 */
 		pll_register_string('button_info', 'Solicita información');
 	}
 });
@@ -1601,9 +1814,10 @@ add_action('init', function () {
 function category_ui_filter($atts = [], $content = '')
 {
 
-	extract(shortcode_atts(array(
+	$atts = shortcode_atts(array(
 		"id"	=> ''
-	), $atts));
+	), $atts);
+	$id = $atts['id'];
 
 	$output = '<div class="cat-filter"><div class="cat-filter--grid">';
 
@@ -1686,10 +1900,12 @@ function get_pictau_blocks_ID_by_title($title)
 function pictau_block_cpt_id_by_title($atts = [], $content = '')
 {
 
-	extract(shortcode_atts(array(
+	$atts = shortcode_atts(array(
 		"title"	=> null,
 		"mostrar"	=> null
-	), $atts));
+	), $atts);
+	$title = $atts['title'];
+	$mostrar = $atts['mostrar'];
 
 	$output = '';
 
@@ -1703,7 +1919,38 @@ function pictau_block_cpt_id_by_title($atts = [], $content = '')
 
 	return $output;
 }
-add_shortcode('evento-home', 'pictau_block_cpt_id_by_title');
+add_shortcode('pct-cpt-block', 'pictau_block_cpt_id_by_title');
+
+//! RIVE PLAYER RUNTIME
+function rive_runtime($atts = [], $content = '')
+{
+
+	$atts = shortcode_atts(array(
+		"src"		=> null,
+		"font"	=> 'inter2.ttf',
+		"i18n"	=> false
+	), $atts);
+	$src = $atts['src'];
+	$font = $atts['font'];
+	$i18n = $atts['i18n'];
+
+	// Enqueue our script.
+	wp_enqueue_script('rive-player');
+
+	$fontUrl = ($font) ? 'data-rivefont="' . get_stylesheet_directory_uri() . '/assets/' . $font . '"' : null;
+	$i18nData = ($i18n) ? 'data-rivei18n="' . $i18n . '"' : null;
+	// $fontUrl = ($font) ? 'data-rivefont="' . $font . '"' : null;
+
+
+
+	return '<canvas data-rive="' . $src . '" ' . $fontUrl . $i18nData . ' ></canvas>';
+}
+add_shortcode('rive', 'rive_runtime');
+
+
+
+
+
 
 
 //! LIMIT POSTS EXCERPT AND ADD CUSTOM ELLIPSIS
@@ -1750,6 +1997,30 @@ function wpdocs_get_paginated_links($query)
 	}, $pages);
 }
 
+
+//! HIDE FROM THE FRONTEND ALL POSTS THAT ARE NOT PUBLISHED
+function ocultar_todas_las_entradas_privadas($query)
+{
+
+	// Aseguramos que solo afecta al frontend y a la query principal
+	if (is_admin() || ! $query->is_main_query()) {
+		return;
+	}
+	// ⚠️ Si es una previsualización (draft o private), NO TOCAR post_status
+	if (is_preview()) {
+		return;
+	}
+	// ⚠️ Si es singular y el usuario puede ver el post (por ejemplo privado propio), NO tocar
+	if (is_singular()) {
+		return;
+	}
+	// Ocultar privadas del frontend normal
+	$query->set('post_status', 'publish');
+}
+add_action('pre_get_posts', 'ocultar_todas_las_entradas_privadas');
+
+
+
 function posts_navigation()
 {
 	global $wp_query;
@@ -1763,38 +2034,50 @@ function posts_navigation()
 		$current = $link->isCurrent;
 		$isCurrent = $current ? 'current' : '';
 
-		$output .= '<div class="nav-item ' . $isCurrent . '">';
+
 
 		if ($link->isCurrent):
-			$output .= '<div class="item-content">' . $link->page . '</div>';
+			$output .= '<div class="nav-item ' . $isCurrent . '">';
+			$output .= '	<div class="item-content">' . $link->page . '</div>';
+			$output .= '</div>';
+
 		else :
-			$output .= '<a class="item-content bt-link" href="' . $link->url  . '">' . $link->page . '</a>';
+			$output .= '<a class="nav-item bt-link" href="' . $link->url  . '">';
+			$output .= '	<div class="item-content">';
+			$output .= 			$link->page;
+			$output .= '	</div>';
+			$output .= '</a>';
 		endif;
 
-		$output .= '</div>';
+
 
 	endforeach;
 
-	$output .= '</div>';
+	$output .= '</a>';
 	$output .= '	</nav>';
 
 	return $output;
 }
 
 
-// CHANGE ARCHIVE POSTS PERPAGE FOR CPT WEBINARS-ONDEMAND
+//! CHANGE ARCHIVE POSTS PERPAGE
 
-add_filter('pre_get_posts', 'custom_change_webinars_posts_per_page');
+add_filter('pre_get_posts', 'custom_change_posts_per_page');
 /**
- * Change Posts Per Page for Portfolio Archive.
+ * Change Posts Per Page for Archive pages (can be set for specific custom post types)
  *
  * @param object $query data
  *
  */
-function custom_change_webinars_posts_per_page($query)
+function custom_change_posts_per_page($query)
 {
 
-	if ($query->is_post_type_archive('webinar-ondemand') && ! is_admin() && $query->is_main_query()) {
+
+	if (!is_admin() && $query->is_main_query()) {
+		$query->set('posts_per_page', '9');
+	}
+
+	if ($query->is_post_type_archive('ebook') && ! is_admin() && $query->is_main_query()) {
 		$query->set('posts_per_page', '10');
 	}
 
@@ -1819,13 +2102,25 @@ add_action('wpcf7_init', 'custom_add_form_tag_paywall_pdf');
 
 function custom_add_form_tag_paywall_pdf()
 {
-	wpcf7_add_form_tag('paywallpdf', 'custom_paywallpdf_form_tag_handler'); // "clock" is the type of the form-tag
+	if (!function_exists('wpcf7_add_form_tag')) {
+		return;
+	}
+
+	wpcf7_add_form_tag('paywallpdf', 'custom_paywallpdf_form_tag_handler'); // "paywallpdf" is the type of the form-tag
 }
 
 function custom_paywallpdf_form_tag_handler($tag)
 {
+	if (!function_exists('pods')) {
+		return '#';
+	}
+
 	$post_type = get_post_type();
 	$pods = pods($post_type, get_the_id());
+	if (!$pods || !method_exists($pods, 'field')) {
+		return '#';
+	}
+
 	$pdf_url = $pods->field('ebook_pdf._src');
 	if (isset($pdf_url)) {
 		return $pdf_url;
@@ -1833,3 +2128,183 @@ function custom_paywallpdf_form_tag_handler($tag)
 		return '#';
 	}
 }
+
+
+
+//!  AVOID WP CHANGING BLOCKQUOTES (DOUBLE QUOTES) TO << / >> QUOTES in Spanish. THIS IS A BUG IN WP
+add_filter('no_texturize_tags', 'my_no_texturzie_tags');
+function my_no_texturzie_tags($tags)
+{
+	$tags[] = 'p';
+	$tags[] = 'q';
+	$tags[] = 'blockquote';
+	$tags[] = 'h1';
+	$tags[] = 'h2';
+	$tags[] = 'h3';
+	return $tags;
+}
+
+
+//! CONTACT FORM 7 REMOVE AUTO P TAGS
+// add_filter('wpcf7_autop_or_not', '__return_false');
+
+
+
+
+
+//! BROWSER LANGUAGE REDIRECTION ON MULTILINGUAL SITE
+// function redirect_based_on_browser_language() {
+//     $user_language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+//     $supported_languages = array('en','fr', 'es-co'); // Add your supported languages here
+
+// 		echo '<h1>'. $user_language . '</h1>';
+
+
+//     if (in_array($user_language, $supported_languages)) {
+//         $language_code = $user_language;
+// 				$redirect_url = home_url('/' . $language_code . '/');
+// 				wp_redirect($redirect_url);
+// 				exit;
+//     }
+
+// 		return;
+
+// }
+// add_action('template_redirect', 'redirect_based_on_browser_language');
+
+
+
+
+
+//! Copiar campos de archivo/imagen/video de Pods al duplicar con Yoast Duplicate Post.
+add_action('dp_duplicate_post', function ($new_post_id, $post) {
+	if (!function_exists('pods') || !function_exists('pods_api') || !class_exists('PodsAPI')) {
+		return; // Pods no disponible
+	}
+
+	$original_id = $post->ID;
+	$post_type   = get_post_type($original_id);
+
+	// Cargamos la definición del Pod para conocer sus campos
+	$api = pods_api();
+	$pod_def = $api->load_pod(['name' => $post_type]);
+	if (empty($pod_def) || empty($pod_def['fields'])) {
+		return; // No es un Pod o no hay campos definidos
+	}
+
+	// Instancias Pods del original y del nuevo
+	$pod_old = pods($post_type, $original_id);
+	$pod_new = pods($post_type, $new_post_id);
+
+	if (!$pod_old || !$pod_new) {
+		return;
+	}
+
+	// Tipos de campo Pods que queremos copiar explícitamente
+	$file_like_types = ['file', 'image', 'video', 'avatar', 'media'];
+
+	$updates = [];
+
+	foreach ($pod_def['fields'] as $field_name => $field_def) {
+		if (!in_array($field_def['type'], $file_like_types, true)) {
+			continue;
+		}
+
+		// Obtenemos el valor "raw" del original
+		$val = $pod_old->field($field_name, true);
+
+		// Normalizamos a array de IDs (Pods puede devolver arrays de arrays)
+		if (is_array($val)) {
+			$ids = [];
+			foreach ($val as $item) {
+				if (is_array($item) && isset($item['ID'])) {
+					$ids[] = (int) $item['ID'];
+				} elseif (is_numeric($item)) {
+					$ids[] = (int) $item;
+				}
+			}
+			$val = $ids;
+		}
+
+		// Si es vacío, evitamos sobrescribir valores por accidente
+		if (!empty($val)) {
+			$updates[$field_name] = $val;
+		}
+	}
+
+	if (!empty($updates)) {
+		// Guardamos todos los file/image/video fields en el post duplicado
+		$pod_new->save($updates);
+	}
+}, 10, 2);
+
+// (Opcional) Asegurar que Yoast no filtra metadatos de Pods
+add_filter('duplicate_post_should_copy_meta', function ($should_copy, $meta_key) {
+	// Fuerza copiar metadatos relacionados con Pods si aparecieran como postmeta
+	if (strpos($meta_key, 'pods_') === 0 || strpos($meta_key, '_pods_') === 0) {
+		return true;
+	}
+	return $should_copy;
+}, 10, 2);
+
+
+
+
+//! Oculta automáticamente en Yoast SEO todos los CPT sin archive (has_archive = false)
+
+// 1) Evita que Yoast genere el enlace de archivo para CPT sin archive
+add_filter('wpseo_sitemap_post_type_archive_link', function ($link, $post_type) {
+	$obj = get_post_type_object($post_type);
+	if (!$obj) return $link;
+
+	if (empty($obj->has_archive)) {
+		return false; // No mostrar enlace de archivo
+	}
+
+	return $link;
+}, 10, 2);
+
+// 2) Elimina del sitemap_index.xml los bloques de CPT sin archive
+add_filter('wpseo_sitemap_index', function ($sitemap_index) {
+	$cpts = get_post_types(['public' => true, '_builtin' => false], 'objects');
+
+	foreach ($cpts as $pt => $obj) {
+		if (empty($obj->has_archive)) {
+			$pattern = '#<sitemap>.*?' . preg_quote($pt . '-sitemap.xml', '#') . '.*?</sitemap>#is';
+			$sitemap_index = preg_replace($pattern, '', $sitemap_index);
+		}
+	}
+
+	return $sitemap_index;
+});
+
+// 3) Evita que Yoast genere el sitemap de posts individuales de CPT sin archive
+add_filter('wpseo_sitemap_entries_per_page', function ($n, $post_type = null) {
+	// Algunas versiones de Yoast solo pasan $n
+	if (!$post_type) {
+		return $n;
+	}
+
+	$obj = get_post_type_object($post_type);
+	if ($obj && empty($obj->has_archive)) {
+		// No generar sitemap para este CPT
+		return 0;
+	}
+
+	return $n;
+}, 10, 2);
+
+
+
+
+
+
+/**
+ * !Functions which enhance the theme by hooking into WordPress.
+ */
+// require get_template_directory() . '/inc/utilities.php';
+
+//! Sepeculative loading in WP 6.8+ --> disable
+// add_filter( 'wp_speculation_rules_configuration', '__return_null' );
+
+// require get_template_directory() . '/inc/catalog.php';

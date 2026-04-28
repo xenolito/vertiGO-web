@@ -41,6 +41,7 @@
 		"watch:tailwind:editor": "npm run development:tailwind:editor -- --watch",
 		"watch:tailwind:editor:extra": "npm run development:tailwind:editor:extra -- --watch",
 		"watch:tailwind:themejson": "chokidar \"./theme/theme.json\" -c \"nodetouch ./tailwind/tailwind.config.js\"",
+		"watch:tailwind:custom": "chokidar \"./tailwind/custom/**/*.css\" -c \"nodetouch ./tailwind/tailwind.css\"",
 		"watch:esbuild": "npm run development:esbuild -- --watch --sourcemap",
 		"watch:browser-sync": "browser-sync start --https --proxy $npm_package_config_domain --files \"theme\" --no-notify",
 		"watch": "run-p \"watch:**\"",

@@ -52,22 +52,13 @@ body.fixed-header {
 
 			.main-header-wrap {
 				@apply !bg-[var(--header-scrolled-color)] dark:!bg-[var(--header-scrolled-color-dark)] text-black dark:text-white border-black/10 dark:border-white/25;
-				transition: all 0.6s ease;
 				background-repeat: no-repeat;
 				backdrop-filter: blur(7.5px);
 				.logo-brand {
-					filter: brightness(0);
+					filter: none;
 					/* filter: none; */
 				}
 			}
-		}
-	}
-}
-
-:root.dark {
-	.main-header-wrap {
-		.logo-brand {
-			filter: brightness(1) !important;
 		}
 	}
 }
@@ -96,7 +87,22 @@ body.fixed-header {
 	}
 
 	.logo-brand {
-		/* filter: brightness(10); */
+		filter: contrast(0) brightness(100); /* white */
+		.color1 {
+			* {
+				fill: #003399;
+			}
+		}
+		.color2 {
+			* {
+				fill: #ff6700;
+			}
+		}
+		.color3 {
+			* {
+				fill: #000000;
+			}
+		}
 		z-index: 10;
 	}
 }

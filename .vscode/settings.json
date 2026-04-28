@@ -3,6 +3,6 @@
   "javascript.format.semicolons": "remove",
   "prettier.eslintIntegration": true,
   "intelephense.environment.includePaths": [
-    "/Volumes/KRAKEN/HTDOCS/mercanza-2024/app/public"
+    "/Volumes/KRAKEN/HTDOCS/vertigo/app/public"
   ]
 }

@@ -2722,6 +2722,7 @@ h3,
 h4,
 h5 {
   font-weight: 500;
+  font-family: var(--def-heading-font-family);
 }
 
 h1,
@@ -2857,11 +2858,12 @@ h1 em, h2 em, h3 em {
   font-style: normal;
   /* text-transform: uppercase; */
   color: var(--main-color);
-  -webkit-text-fill-color: transparent;
-  -webkit-background-clip: text;
-  background-clip: text;
-  background-image: var(--heading-highlight-grad);
 }
+
+/* -webkit-text-fill-color: transparent;
+		-webkit-background-clip: text;
+		background-clip: text;
+		background-image: var(--heading-highlight-grad); */
 
 h1 em .word, h2 em .word, h3 em .word {
   overflow: visible;
@@ -4077,19 +4079,14 @@ body.fixed-header #masthead.scrolledHeader .main-header-wrap {
 }
 
 body.fixed-header #masthead.scrolledHeader .main-header-wrap {
-  transition: all 0.6s ease;
   background-repeat: no-repeat;
   -webkit-backdrop-filter: blur(7.5px);
           backdrop-filter: blur(7.5px);
 }
 
 body.fixed-header #masthead.scrolledHeader .main-header-wrap .logo-brand {
-  filter: brightness(0);
+  filter: none;
   /* filter: none; */
-}
-
-:root.dark .main-header-wrap .logo-brand {
-  filter: brightness(1) !important;
 }
 
 .main-header-wrap {
@@ -4161,7 +4158,24 @@ body.fixed-header #masthead.scrolledHeader .main-header-wrap .logo-brand {
 }
 
 .main-header-wrap .logo-brand {
-  /* filter: brightness(10); */
+  filter: contrast(0) brightness(100);
+}
+
+/* white */
+
+.main-header-wrap .logo-brand .color1 * {
+  fill: #003399;
+}
+
+.main-header-wrap .logo-brand .color2 * {
+  fill: #ff6700;
+}
+
+.main-header-wrap .logo-brand .color3 * {
+  fill: #000000;
+}
+
+.main-header-wrap .logo-brand {
   z-index: 10;
 }
 
@@ -9212,6 +9226,10 @@ body.single-evento #content #contenido h2 {
   /* background-image: linear-gradient(to top, rgb(255, 0, 0), rgb(252, 0, 141) 100%); */
 }
 
+#footer .company-logo svg {
+  max-width: 400px;
+}
+
 body.home .sections .pct-section#documentos {
   margin-bottom: calc((var(--default-section-vert-padding) + 50px) * -2);
 }
@@ -10216,6 +10234,8 @@ button.swiper-pagination-bullet{
   /* --main-color: rgb(196, 228, 86); */
   /* --main-color: #c3ff00; */
   --main-color: #fc1a57;
+  --main-color: #ff6700;
+  --secondary-color: #0047ba;
   --main-color-darker: #7a9913;
   --bg-light: rgb(246, 243, 239);
   --bg-dark: rgb(3, 18, 39);
@@ -10281,7 +10301,7 @@ button.swiper-pagination-bullet{
   --txt-color: #343434;
   --txt-color-dark: white;
   /* --heading-color: rgb(85, 60, 27); */
-  --heading-color: var(--main-color);
+  --heading-color: var(--secondary-color);
   --heading-color-dark: var(--main-color);
   --line-color: var(--heading-color);
   --line-color-dark: var(--heading-color-dark);
@@ -10517,7 +10537,7 @@ button.swiper-pagination-bullet{
   /* --def-font-family: "Outfit", Helvetica, Arial, sans-serif;
 	--def-heading-font-family: "Outfit", Helvetica, Arial, sans-serif; */
   --def-font-family: "Quicksand", Helvetica, Arial, sans-serif;
-  --def-heading-font-family: "Quicksand", Helvetica, Arial, sans-serif;
+  --def-heading-font-family: "Montserrat", Helvetica, Arial, sans-serif;
   --txt-slider-heading: "Montserrat", Helvetica, Arial, sans-serif;
   --def-txt-color: #404040;
   --txt-heading-color: #3a3a3a;

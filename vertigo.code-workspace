@@ -4,5 +4,14 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"chat.tools.terminal.autoApprove": {
+			"/^pwd && command -v node && node -v && command -v npx && npx --yes playwright --version$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"command": true,
+			"npx -y @playwright/mcp@latest": true
+		}
+	}
 }

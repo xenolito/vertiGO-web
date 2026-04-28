@@ -80,6 +80,14 @@ Implementation notes:
 
 If you update `lenis` or `gsap`, validate anchor clicks and dot navigation behavior to ensure scroll starts immediately and easing remains consistent.
 
+### Inline SVG shortcode behavior
+
+The `[svg]` shortcode now ignores internal control attributes when generating the final `<svg>` tag.
+
+- `filename` and `figure` are used only by the shortcode logic and are not injected as SVG attributes.
+- Empty attribute values are ignored to avoid invalid output like `width=""` or `height=""`.
+- This prevents browser console errors caused by invalid SVG length attributes.
+
 ### Deployment
 
 6. Run `npm run production` to build the production.
