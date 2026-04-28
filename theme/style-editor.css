@@ -3639,8 +3639,8 @@ body.fixed-header #masthead.scrolledHeader .main-header-wrap {
 }
 
 body.fixed-header #masthead.scrolledHeader .main-header-wrap .logo-brand {
-  /* filter: brightness(0); */
-  filter: none;
+  filter: brightness(0);
+  /* filter: none; */
 }
 
 :root.dark .main-header-wrap .logo-brand {
@@ -3716,7 +3716,7 @@ body.fixed-header #masthead.scrolledHeader .main-header-wrap .logo-brand {
 }
 
 .main-header-wrap .logo-brand {
-  filter: brightness(10);
+  /* filter: brightness(10); */
   z-index: 10;
 }
 
