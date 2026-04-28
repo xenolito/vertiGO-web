@@ -1,6 +1,5 @@
 /**
- * Custom animation for slider mercanza MODEL A (launch May 2024)
- * if class "anim-intro" on slider, --> exec gsap animation for intro and (cover)
+ * Scroll to a name (anchor) on the page with smooth animation.
  *
  */
 
@@ -93,7 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
 				if (document.querySelector(`#${target}`) || !filteredTarget) {
 					scrollWithEngine({
 						target: filteredTarget ? `#${filteredTarget}` : 0,
-						offset: offset_WP_menu.height ?? 0,
+						// offset: offset_WP_menu.height ?? 0,
+						offset: 0,
 						onComplete: () => {
 							history.pushState(null, null, `#${target}`)
 						},

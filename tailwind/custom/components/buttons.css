@@ -94,7 +94,6 @@ button#submit {
 			@apply text-white hover:!text-slate-800;
 			&::before {
 				@apply hover:!bg-white;
-				/* @apply !bg-[var(--menu-item-hover-bg-color)] hover:!bg-white rounded-[var(--def-border-radius)] py-[.5rem] px-[3px]; */
 			}
 		}
 	}
@@ -107,8 +106,7 @@ button#submit {
 			a {
 				@apply text-white;
 				&::before {
-					@apply !bg-[var(--main-color)] hover:!bg-slate-700;
-					/* @apply !bg-[var(--menu-item-hover-bg-color)] hover:!bg-white rounded-[var(--def-border-radius)] py-[.5rem] px-[3px]; */
+					@apply !bg-[var(--main-color)] hover:!bg-[var(--cta-color)];
 				}
 			}
 		}

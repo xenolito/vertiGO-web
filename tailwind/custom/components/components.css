@@ -59,11 +59,11 @@
 	--txt-color-theme-A: white;
 	--txt-color-theme-A-dark: white;
 
-	--bg-color-theme-B: #1d2a3d;
+	--bg-color-theme-B: transparent;
 	--bg-color-theme-B-dark: #233652;
-	--heading-color-theme-B: white;
+	--heading-color-theme-B: var(--secondary-color);
 	--heading-color-theme-B-dark: var(--main-color);
-	--txt-color-theme-B: white;
+	--txt-color-theme-B: var(--txt-color);
 	--txt-color-theme-B-dark: white;
 
 	--bg-color-theme-white: white;
@@ -100,7 +100,7 @@
 	--card-border-color-dark: rgb(255, 255, 255, 0.15);
 	/* --card-border-color-dark: rgb(196, 228, 86, 0.5); */
 
-	--cta-color: #343434;
+	--cta-color: var(--secondary-color);
 	/* --cta-color: #c3ff00; */
 	/* --cta-color: var(--main-color); */
 	--cta-color-dark: var(--main-color);

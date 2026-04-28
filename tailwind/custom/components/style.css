@@ -57,11 +57,11 @@
 	h2,
 	h3,
 	h4 {
-		@apply text-[var(--heading-color-theme-B)] dark:text-[var(--heading-color-theme-B-dark)];
+		@apply !text-[var(--heading-color-theme-B)] dark:text-[var(--heading-color-theme-B-dark)];
 	}
 
 	p {
-		@apply text-[var(--txt-color-theme-B)] dark:text-[var(--txt-color-theme-B-dark)];
+		@apply !text-[var(--txt-color-theme-B)] dark:text-[var(--txt-color-theme-B-dark)];
 	}
 }
 

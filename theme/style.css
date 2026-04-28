@@ -1932,10 +1932,6 @@ button#submit {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity)) !important;
 }
 
-.above-header-wrap .menu-bt a::before {
-  /* @apply !bg-[var(--menu-item-hover-bg-color)] hover:!bg-white rounded-[var(--def-border-radius)] py-[.5rem] px-[3px]; */
-}
-
 .main-header-wrap .main-nav-desktop .menu-bt a, .main-header-wrap .main-nav-mobile .menu-bt a {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
@@ -1946,12 +1942,7 @@ button#submit {
 }
 
 .main-header-wrap .main-nav-desktop .menu-bt a:hover::before, .main-header-wrap .main-nav-mobile .menu-bt a:hover::before {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(51 65 85 / var(--tw-bg-opacity)) !important;
-}
-
-.main-header-wrap .main-nav-desktop .menu-bt a::before, .main-header-wrap .main-nav-mobile .menu-bt a::before {
-  /* @apply !bg-[var(--menu-item-hover-bg-color)] hover:!bg-white rounded-[var(--def-border-radius)] py-[.5rem] px-[3px]; */
+  background-color: var(--cta-color) !important;
 }
 
 a.bt-inline {
@@ -7990,7 +7981,7 @@ html::-webkit-scrollbar-track {
 	.theme-color-B h2,
 	.theme-color-B h3,
 	.theme-color-B h4 {
-  color: var(--heading-color-theme-B);
+  color: var(--heading-color-theme-B) !important;
 }
 
 :is(:where(.dark) .theme-color-B h1),:is(:where(.dark) 
@@ -8001,7 +7992,7 @@ html::-webkit-scrollbar-track {
 }
 
 .theme-color-B p {
-  color: var(--txt-color-theme-B);
+  color: var(--txt-color-theme-B) !important;
 }
 
 :is(:where(.dark) .theme-color-B p) {
@@ -10256,11 +10247,11 @@ button.swiper-pagination-bullet{
   --heading-color-theme-A-dark: var(--main-color);
   --txt-color-theme-A: white;
   --txt-color-theme-A-dark: white;
-  --bg-color-theme-B: #1d2a3d;
+  --bg-color-theme-B: transparent;
   --bg-color-theme-B-dark: #233652;
-  --heading-color-theme-B: white;
+  --heading-color-theme-B: var(--secondary-color);
   --heading-color-theme-B-dark: var(--main-color);
-  --txt-color-theme-B: white;
+  --txt-color-theme-B: var(--txt-color);
   --txt-color-theme-B-dark: white;
   --bg-color-theme-white: white;
   --bg-color-theme-white-dark: rgb(255 255 255 / 10%);
@@ -10290,7 +10281,7 @@ button.swiper-pagination-bullet{
   --card-border-color-light: rgba(85, 60, 27, 0.5);
   --card-border-color-dark: rgb(255, 255, 255, 0.15);
   /* --card-border-color-dark: rgb(196, 228, 86, 0.5); */
-  --cta-color: #343434;
+  --cta-color: var(--secondary-color);
   /* --cta-color: #c3ff00; */
   /* --cta-color: var(--main-color); */
   --cta-color-dark: var(--main-color);
