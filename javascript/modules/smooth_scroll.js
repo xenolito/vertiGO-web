@@ -10,7 +10,7 @@
 // 	smoothTouch: 0.1, // much shorter smoothing time on touch devices (default is NO smoothing on touch devices)
 // });
 
-import Lenis from '@studio-freight/lenis'
+import Lenis from 'lenis'
 
 // smooth scroll
 const lenis = new Lenis({
