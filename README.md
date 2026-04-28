@@ -61,6 +61,25 @@ I also encourage you to change your database prefix for security reasons, you ca
 4. Run `npm run watch`
 5. Add [Tailwind utility classes](https://tailwindcss.com/docs/utility-first) with abandon
 
+### Anchor navigation with Lenis + GSAP
+
+When using hash links (`a#name`) and dot navigation, smooth scrolling is handled with a hybrid approach to avoid animation lag after Lenis upgrades.
+
+-   File: `javascript/modules/scrollToAName.js`
+-   GSAP controls the tween curve and timing (`expo.inOut`, `0.7s`)
+-   Lenis applies the animated scroll position on each GSAP frame with `immediate: true`
+-   This avoids double smoothing (Lenis easing on top of GSAP easing), which caused a perceptible pause before scrolling started
+-   If Lenis is not available, the module falls back to GSAP ScrollTo on `window`
+
+Implementation notes:
+
+1. Convert anchor target to absolute `y` position (with header offset support)
+2. Animate an internal numeric state with GSAP
+3. On each `onUpdate`, call `lenis.scrollTo(stateY, { immediate: true, force: true })`
+4. Prevent overlap by killing the previous active tween before starting a new one
+
+If you update `lenis` or `gsap`, validate anchor clicks and dot navigation behavior to ensure scroll starts immediately and easing remains consistent.
+
 ### Deployment
 
 6. Run `npm run production` to build the production.
