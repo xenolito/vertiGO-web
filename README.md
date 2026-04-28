@@ -1,4 +1,4 @@
-# VertiGO! WordPress Thinking Mard Development
+# VertiGO! WordPress Thinking Mark Development
 
 Pictau WordPress theme with [tailwindcss](https://tailwindcss.com/docs/installation), based on [www.underscoretw.com](https://underscoretw.com).
 Any question and contributions are welcome: [@xenolito](mailto:orey@pictau.com)
