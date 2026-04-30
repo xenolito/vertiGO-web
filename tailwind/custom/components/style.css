@@ -162,6 +162,25 @@ body:has(.home) {
 		p {
 			font-size: clamp(1rem, 5vw, 1.1rem);
 		}
+
+		&.anim-intro-triggered {
+			.slider-cover {
+				background-color: white !important;
+				animation: flash 2s ease-out 1;
+			}
+		}
+	}
+}
+
+@keyframes flash {
+	0% {
+		opacity: 0;
+	}
+	10% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
 	}
 }
 

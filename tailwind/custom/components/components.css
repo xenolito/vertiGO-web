@@ -441,7 +441,7 @@
 
 	/* ! LOGO HEADER DIMENSIONS */
 	--desktop-logo-brand-width: 140px;
-	--mobile-logo-brand-width: 60px;
+	--mobile-logo-brand-width: 100px;
 	--logo-brand-width: var(--desktop-logo-brand-width);
 	@media only screen and (max-width: 1023px) {
 		--logo-brand-width: var(--mobile-logo-brand-width);

@@ -32,6 +32,7 @@ import './modules/scrollTrigger_pin'
 // import './modules/animation_blur_chars'
 // import './modules/animation_headers'
 import './modules/animation_any'
+import './modules/video_time_trigger'
 // import './modules/animation_float'
 // import './modules/lottiePlayer'
 // import './modules/swiper-product-showcase'
@@ -66,6 +67,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	// setBackgrounds()
 })
+
+//! HOME VIDEO TRIGGER CALLBACK -- CUSTOMER SPECIFIC -- REMOVE FOR OTHER CUSTOMERS
+window.hero_video_trigger = () => {
+	clearTimeout(window.cT)
+	const slider = document.querySelector('.slider.anim-intro')
+
+	slider.classList.add('anim-intro-triggered')
+
+	window.cT = setTimeout(() => {
+		slider.classList.remove('anim-intro-triggered')
+	}, 3000)
+}
 
 const setPageTransitions = () => {
 	window.addEventListener('load', () => {

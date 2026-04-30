@@ -80,6 +80,55 @@ Implementation notes:
 
 If you update `lenis` or `gsap`, validate anchor clicks and dot navigation behavior to ensure scroll starts immediately and easing remains consistent.
 
+### Video time trigger (`video_time_trigger.js`)
+
+Dispara lógica JS cuando un `<video>` alcanza un segundo concreto de reproducción. Compatible con vídeos en autoplay, sin controles y en bucle.
+
+**Archivo:** `javascript/modules/video_time_trigger.js`
+
+#### Data-attributes
+
+| Atributo | Tipo | Default | Descripción |
+|---|---|---|---|
+| `data-videotrigger` | — | — | Activa el módulo en el elemento |
+| `data-videotrigger_time` | Number | `0` | Segundo en el que se dispara el evento |
+| `data-videotrigger_callback` | String | — | Nombre de función global (`window[name]`) a llamar |
+| `data-videotrigger_once` | Boolean | `false` | Si `true`, se dispara solo la primera vez (no en cada bucle) |
+
+#### Mecanismo de disparo (doble)
+
+1. **CustomEvent `videotrigger`** — siempre emitido en el elemento, con `{ bubbles: true, detail: { time, video } }`.
+2. **Función global** — si `callback` está definido, llama a `window[callback](video, el)`.
+
+#### Uso
+
+```html
+<video
+  data-videotrigger
+  data-videotrigger_time="5"
+  data-videotrigger_callback="miCallback"
+  autoplay loop muted playsinline
+  src="video.mp4">
+</video>
+
+<script>
+// Opción A: función global
+function miCallback(video, el) { ... }
+
+// Opción B: CustomEvent (sin necesidad de callback)
+document.querySelector('[data-videotrigger]').addEventListener('videotrigger', e => {
+  console.log('segundo alcanzado:', e.detail.time)
+})
+</script>
+```
+
+Para disparar solo una vez (no re-disparar en cada vuelta del loop):
+```html
+data-videotrigger_once="true"
+```
+
+La instancia queda accesible en `el.videoTimeTrigger`. Expone `reset()` para reiniciar el estado manualmente.
+
 ### Inline SVG shortcode behavior
 
 The `[svg]` shortcode now ignores internal control attributes when generating the final `<svg>` tag.

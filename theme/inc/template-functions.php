@@ -1566,7 +1566,9 @@ function video_as_background($atts = [], $content = '')
 		"noautoplay"				=> false,
 		"webm"						=> false,
 		"callback"				=> false,
-		"align"						=> 'center'
+		"align"						=> 'center',
+		"timetrigger"			=> false,
+		"timetriggercallback"	=> false
 
 	), $atts);
 	$overlayopacity = $atts['overlayopacity'];
@@ -1577,6 +1579,9 @@ function video_as_background($atts = [], $content = '')
 	$webm = $atts['webm'];
 	$callback = $atts['callback'];
 	$align = $atts['align'];
+
+	$timetrigger         = $atts['timetrigger'];
+	$timetriggercallback = $atts['timetriggercallback'];
 
 	$isAutoplay = $noautoplay ? '' : 'autoplay';
 	$hasOverlayOpacity = $overlayopacity ? 'data-overlayopacity="' . $overlayopacity . '"' : '';
@@ -1597,8 +1602,12 @@ function video_as_background($atts = [], $content = '')
 		$src = $videoList[array_rand($videoList)];
 	}
 
+	$hasTimeTrigger = $timetrigger
+		? 'data-videotrigger data-videotrigger_time="' . esc_attr($timetrigger) . '"'
+		. ($timetriggercallback ? ' data-videotrigger_callback="' . esc_attr($timetriggercallback) . '"' : '')
+		: '';
 
-	$output .= '<video class="video-bg" style="object-position: ' . $align . ';" ' . $isAutoplay . ' muted loop playsinline preload="metadata" poster="' . wp_upload_dir()['baseurl'] . '/' . $src . '.webp" aria-label="intro video">';
+	$output .= '<video class="video-bg" style="object-position: ' . $align . ';" ' . $isAutoplay . ' muted loop playsinline preload="metadata" poster="' . wp_upload_dir()['baseurl'] . '/' . $src . '.webp" aria-label="intro video" ' . $hasTimeTrigger . '>';
 	$output .= '<source src="' . wp_upload_dir()['baseurl'] . '/' . $src . '.mp4" ' . $mediaQuery . ' type="video/mp4">';
 	if ($mobile) {
 		$output .= '<source src="' . wp_upload_dir()['baseurl'] . '/' . $src . $mobile . '.mp4" type="video/mp4">';

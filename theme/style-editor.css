@@ -3710,7 +3710,7 @@ body.fixed-header #masthead.scrolledHeader .main-header-wrap .logo-brand {
 /* white */
 
 .main-header-wrap .logo-brand .color1 * {
-  fill: #003399;
+  fill: #0047ba;
 }
 
 .main-header-wrap .logo-brand .color2 * {
@@ -7667,6 +7667,25 @@ body.home .slider p, body:has(.home) .slider p {
   font-size: clamp(1rem, 5vw, 1.1rem);
 }
 
+body.home .slider.anim-intro-triggered .slider-cover, body:has(.home) .slider.anim-intro-triggered .slider-cover {
+  background-color: white !important;
+  animation: flash 2s ease-out 1;
+}
+
+@keyframes flash {
+  0% {
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
 /*! BACKGROUNDS GRADIENTS */
 
 .bg-primary {
@@ -10160,7 +10179,7 @@ button.swiper-pagination-bullet{
   --svg-default-w: 80px;
   --form-max-width: 320px;
   --desktop-logo-brand-width: 140px;
-  --mobile-logo-brand-width: 60px;
+  --mobile-logo-brand-width: 100px;
   --logo-brand-width: var(--desktop-logo-brand-width);
 }
 
