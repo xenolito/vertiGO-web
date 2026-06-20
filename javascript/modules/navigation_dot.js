@@ -37,7 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
 			this.navItems = []
 
 			this.sections.forEach(section => {
-				section.label = section.dataset['label'] && section.dataset['label'] !== '' ? section.dataset['label'] : section.getAttribute('id')
+				if (!section.dataset['label'] || section.dataset['label'] === '') return
+
+				section.label = section.dataset['label']
 				const navItem = document.createElement('a')
 				navItem.classList.add('nav-item')
 				navItem.setAttribute('href', `#${section.getAttribute('id')}`)

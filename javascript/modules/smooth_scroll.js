@@ -1,16 +1,6 @@
-// import { gsap } from 'gsap';
-// import { ScrollTrigger, ScrollSmoother } from 'gsap/ScrollTrigger';
-
-// gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
-
-// ScrollSmoother.create({
-// 	wrappper: document.querySelector('body'),
-// 	smooth: 1, // how long (in seconds) it takes to "catch up" to the native scroll position
-// 	effects: true, // looks for data-speed and data-lag attributes on elements
-// 	smoothTouch: 0.1, // much shorter smoothing time on touch devices (default is NO smoothing on touch devices)
-// });
-
+import { gsap } from 'gsap'
 import Lenis from 'lenis'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 // smooth scroll
 const lenis = new Lenis({
@@ -27,16 +17,12 @@ const lenis = new Lenis({
 	// normalizeWheel: true,
 })
 
-lenis.on('scroll', ({ scroll, limit, velocity, direction, progress }) => {
-	// console.log({ scroll, limit, velocity, direction, progress });
+lenis.on('scroll', ScrollTrigger.update)
+
+gsap.ticker.add((time) => {
+	lenis.raf(time * 1000)
 })
-
-function raf(time) {
-	lenis.raf(time)
-	requestAnimationFrame(raf)
-}
-
-requestAnimationFrame(raf)
+gsap.ticker.lagSmoothing(0)
 
 window.lenis = lenis
 

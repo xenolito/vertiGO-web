@@ -5,10 +5,6 @@ Any question and contributions are welcome: [@xenolito](mailto:orey@pictau.com)
 
 ## Quickstart
 
-### TODO - FIX package.json script:
-```
-"watch:browser-sync": "browser-sync start --proxy $npm_package_config_domain --files \"theme\" --no-notify --no-inject-changes",
-```
 
 ### 1) Before installation, prepare your WordPress
 
@@ -128,6 +124,73 @@ data-videotrigger_once="true"
 ```
 
 La instancia queda accesible en `el.videoTimeTrigger`. Expone `reset()` para reiniciar el estado manualmente.
+
+### Image Mask Animated (`image_mask_animated.js`)
+
+Aplica una máscara blob orgánica animada sobre imágenes, con dos rings de stroke concéntricos y paralelos que se animan de forma continua.
+
+**Archivo:** `javascript/modules/image_mask_animated.js`
+
+#### Mecanismo
+
+-   El módulo inyecta un SVG programáticamente dentro del contenedor. El SVG contiene un `<clipPath>` que enmascara la imagen y dos `<path>` de ring rendereados fuera del área recortada (`overflow: visible`).
+-   Al inicializar aplica `user-select: none` y `pointer-events: none` al elemento `<picture>` o `<figure>` que envuelve la imagen (en bloques Gutenberg estándar será siempre `<figure>`).
+-   El blob se genera paramétricamente cada frame: N puntos en círculo perturbados por ondas seno con fase propia → convertidos a curvas Bézier cúbicas mediante la fórmula Catmull-Rom. La perturbación es exclusivamente inward: `delta = -(intensity × baseR × amplitudes[i]) × (1 + sin(t)) / 2`. Cada punto tiene un multiplicador de amplitud aleatorio (`amplitudes[i] ∈ [0, 1]`) generado al inicializar la instancia, por lo que unos puntos apenas se mueven y otros alcanzan el máximo de `intensity`. El radio oscila entre `baseR` (sin contracción) y `baseR − intensity × baseR` (máxima contracción), nunca superando el límite de la imagen.
+-   Los tres paths (clip + ring1 + ring2) comparten los mismos puntos base a radio distinto, garantizando que siempre sean paralelos.
+-   Animación gestionada con `gsap.ticker`. Un `IntersectionObserver` pausa y reanuda el ticker cuando el elemento entra/sale del viewport. Un `ResizeObserver` recalcula las dimensiones del SVG al cambiar el layout.
+-   Cada instancia recibe un `timeOffset` aleatorio para que múltiples burbujas en la misma página no queden sincronizadas.
+
+#### HTML requerido
+
+```html
+<div data-animask>
+  <picture>
+    <img src="foto.jpg" alt="...">
+  </picture>
+</div>
+```
+
+El SVG y el clip-path se inyectan automáticamente. No se necesita ningún marcado adicional.
+
+#### Data-attributes
+
+| Atributo | Default | Descripción |
+|---|---|---|
+| `data-animask` | — | Activa el módulo en el elemento |
+| `data-animask_points` | `8` | Número de puntos del blob (3–20) |
+| `data-animask_intensity` | `0.12` | Profundidad de contracción inward como fracción del radio base — el blob nunca supera el límite de la imagen |
+| `data-animask_speed` | `1` | Velocidad de la animación (multiplicador en Hz) |
+| `data-animask_gap` | `20` | Separación en px entre el borde exterior de ring1 y el interior de ring2 |
+| `data-animask_ringcolor` | — | Color para ambos rings a la vez (sobreescribe `ring1color` y `ring2color` si está presente) |
+| `data-animask_ringopacity` | — | Opacidad para ambos rings a la vez (sobreescribe `ring1opacity` y `ring2opacity` si está presente) |
+| `data-animask_ring1width` | `12` | Grosor del ring interior en px |
+| `data-animask_ring1color` | `#ffffff` | Color del ring interior |
+| `data-animask_ring1opacity` | `0.85` | Opacidad del ring interior (0–1) |
+| `data-animask_ring2width` | `2` | Grosor del ring exterior en px |
+| `data-animask_ring2color` | `#ffffff` | Color del ring exterior |
+| `data-animask_ring2opacity` | `0.85` | Opacidad del ring exterior (0–1) |
+
+#### Ejemplo con config personalizada
+
+```html
+<div data-animask
+     data-animask_points="6"
+     data-animask_intensity="0.08"
+     data-animask_speed="0.6"
+     data-animask_ring1width="16"
+     data-animask_ring1color="#ffffff"
+     data-animask_ring1opacity="0.9"
+     data-animask_gap="15"
+     data-animask_ring2width="3"
+     data-animask_ring2color="#ffffff"
+     data-animask_ring2opacity="0.4">
+  <picture>
+    <img src="foto.jpg" alt="...">
+  </picture>
+</div>
+```
+
+La instancia queda accesible en `container.imageMask`. Expone `destroy()` para limpiar observers, ticker y clip-path.
 
 ### Inline SVG shortcode behavior
 

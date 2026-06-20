@@ -29,11 +29,10 @@
 	/* ! COLORS DEFAULT */
 	/* --main-color: rgb(196, 228, 86); */
 	/* --main-color: #c3ff00; */
-	--main-color: #fc1a57;
 	--main-color: #ff6700;
-	--secondary-color: #0047ba;
+	--secondary-color: #43a87c;
 	--main-color-darker: #7a9913;
-	--bg-light: rgb(246, 243, 239);
+	--bg-light: hsl(36, 50%, 96%);
 
 	--bg-dark: rgb(3, 18, 39);
 	--bg-layer2-dark: #051a36;
@@ -51,34 +50,18 @@
 	/* --bg-color-theme-A: rgb(210 181 138 / 20%); */
 	/* --bg-color-theme-A: rgb(0 0 0 / 5%); */
 	/* --bg-color-theme-A: rgb(111 127 17 / 10%); */
-	--bg-color-theme-A: linear-gradient(to top, rgb(252, 0, 141), rgb(252, 91, 42) 100%);
 
-	--bg-color-theme-A-dark: rgb(255 255 255 / 10%);
-	--heading-color-theme-A: white;
-	--heading-color-theme-A-dark: var(--main-color);
-	--txt-color-theme-A: white;
-	--txt-color-theme-A-dark: white;
+	--bg-color-theme-A: hsl(36, 50%, 96%);
+	--heading-color-theme-A: hsl(0, 0%, 20%);
+	--txt-color-theme-A: var(var(--heading-color-theme-A));
 
-	--bg-color-theme-B: transparent;
-	--bg-color-theme-B-dark: #233652;
-	--heading-color-theme-B: var(--secondary-color);
-	--heading-color-theme-B-dark: var(--main-color);
-	--txt-color-theme-B: var(--txt-color);
-	--txt-color-theme-B-dark: white;
+	--bg-color-theme-B: hsl(0, 0%, 20%);
+	--heading-color-theme-B: white;
+	--txt-color-theme-B: white;
 
-	--bg-color-theme-white: white;
-	--bg-color-theme-white-dark: rgb(255 255 255 / 10%);
-	--heading-color-theme-white: rgb(87 60 20 / 100%);
-	--heading-color-theme-white-dark: var(--main-color);
-	--txt-color-theme-white: black;
-	--txt-color-theme-white-dark: white;
-
-	--bg-color-theme-Blue: #0056c7;
-	--bg-color-theme-Blue-dark: #0056c7;
-	--heading-color-theme-Blue: white;
-	--heading-color-theme-Blue-dark: white;
-	--txt-color-theme-Blue: white;
-	--txt-color-theme-Blue-dark: white;
+	--bg-color-theme-green: hsl(154, 43%, 46%);
+	--heading-color-theme-Blue: hsl(240, 37%, 12%);
+	--txt-color-theme-Blue: hsl(240, 37%, 12%);
 
 	--bg-color-theme-Red: #d92727;
 	--bg-color-theme-Red-dark: #d92727;
@@ -111,9 +94,6 @@
 	--txt-color: #343434;
 	--txt-color-dark: white;
 
-	/* --heading-color: rgb(85, 60, 27); */
-	--heading-color: var(--secondary-color);
-	--heading-color-dark: var(--main-color);
 	--line-color: var(--heading-color);
 	--line-color-dark: var(--heading-color-dark);
 
@@ -127,6 +107,10 @@
 	--scrolled-menu-txt-color: var(--main-color-second);
 	--scrollbar-handle-color: rgba(0, 0, 0, 0.3);
 	--mmenu-card-color: #f5f9fd;
+
+	--dark-overlay-from-bottom-slider: linear-gradient(350deg, rgba(0, 0, 0, 1) 15%, rgba(0, 0, 0, 0) 100%);
+	/* --dark-overlay-from-bottom-slider: linear-gradient(350deg, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 100%); */
+	--dark-overlay-from-bottom-for-text: linear-gradient(0deg, rgba(0, 0, 0, 0.4) 5%, rgba(0, 0, 0, 0) 100%);
 
 	--footer-gradient: linear-gradient(
 		130deg,
@@ -222,7 +206,7 @@
 		hsl(207deg 100% 50%) 100%
 	);
 
-	--header-scrolled-color: rgba(255, 255, 255, 0.65);
+	--header-scrolled-color: hsla(0, 0%, 100%, 1);
 	--header-scrolled-border-color: var(--main-color-second);
 
 	--header-scrolled-color-dark: rgba(0, 0, 0, 0.45);
@@ -379,9 +363,6 @@
 	/* ! FONTS & TYPOGRAPHY */
 	/* --def-font-family: "Outfit", Helvetica, Arial, sans-serif;
 	--def-heading-font-family: "Outfit", Helvetica, Arial, sans-serif; */
-	--def-font-family: "Quicksand", Helvetica, Arial, sans-serif;
-	--def-heading-font-family: "Montserrat", Helvetica, Arial, sans-serif;
-	--txt-slider-heading: "Montserrat", Helvetica, Arial, sans-serif;
 	--def-txt-color: #404040;
 	--txt-heading-color: #3a3a3a;
 	--light-grey-color: #ddd;

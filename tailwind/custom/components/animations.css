@@ -40,21 +40,11 @@
 	--ease-squish-3: var(--ease-elastic-in-out-3);
 }
 
-@keyframes ping {
-	75%,
-	100% {
-		scale: 3;
-		opacity: 0;
-	}
-	0% {
-		scale: 1;
-		opacity: 1;
-	}
-	100% {
-		scale: 7;
-		opacity: 0;
-	}
+/* image_mask_animated: hide before JS applies clip-path to prevent flash of unmasked image */
+[data-animask] {
+	visibility: hidden;
 }
+
 @keyframes pulse {
 	50% {
 		opacity: 0.5;
@@ -289,4 +279,76 @@
 	100% {
 		transform: none;
 	}
+}
+
+/*! KEN BURNS FOR IMAGE BLOCK */
+.ken-burns {
+	--zoom-scale: 1.25;
+	--zoom-duration: 40s;
+	--zoom-ease: ease-in-out;
+	--zoom-origin-x: 30%;
+	--zoom-origin-y: 70%;
+	overflow: clip;
+}
+
+.ken-burns img {
+	transform-origin: var(--zoom-origin-x) var(--zoom-origin-y);
+	animation: zoom-pulse var(--zoom-duration) var(--zoom-ease) infinite;
+}
+
+@keyframes zoom-pulse {
+	0%,
+	100% {
+		scale: 1;
+	}
+
+	50% {
+		scale: var(--zoom-scale);
+	}
+}
+
+/*! stickysection: scroll-driven sticky animation */
+[data-stickysection] {
+	position: relative;
+	opacity: 0;
+	transition: opacity 0.3s ease;
+}
+
+[data-stickysection].is-ready {
+	opacity: 1;
+}
+
+:has(> .sticky-scene) {
+	overflow: clip;
+}
+.sticky-scene {
+	position: sticky;
+	top: 0;
+	height: 100vh;
+	width: 100%;
+	/* overflow: hidden; */
+}
+
+[data-stickysection] .is-layer {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	will-change: transform, opacity;
+	/* Per-layer scroll & animation control (override via inline style or [data-st-index] rule).
+	   Timing — --st-size: slot weight (flex-grow); --st-in/out: transition fraction; --st-gap-after: blank scroll.
+	   Animation values (numeric, unitless) — passed directly to GSAP:
+	   --st-initial-scale/opacity: hidden start state. --st-in/out-scale/opacity: transition targets.
+	   Easing — GSAP ease string; supports any GSAP ease e.g. power3.in, back.out(1.7), none. */
+	--st-in: 0.5;
+	--st-out: 0.5;
+	--st-initial-scale: 0.92;
+	--st-initial-opacity: 0;
+	--st-in-scale: 1;
+	--st-in-opacity: 1;
+	--st-out-scale: 0.95;
+	--st-out-opacity: 0;
+	--st-in-ease: power1.out;
+	--st-out-ease: power1.inOut;
 }

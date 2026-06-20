@@ -1,3 +1,9 @@
+:root {
+	--def-font-family: "Outfit", Helvetica, Arial, sans-serif;
+	--def-heading-font-family: "Outfit", Helvetica, Arial, sans-serif;
+	--txt-slider-heading: "Outfit", Helvetica, Arial, sans-serif;
+}
+
 body {
 	@apply text-[var(--txt-color)] dark:text-[var(--txt-color-dark)];
 	font-size: 1rem;
@@ -8,7 +14,7 @@ h2,
 h3,
 h4,
 h5 {
-	@apply font-[500];
+	@apply font-[700];
 	font-family: var(--def-heading-font-family);
 }
 
@@ -19,9 +25,9 @@ h3 {
 	line-height: 2.2ex;
 	margin-left: 0;
 	margin-right: 0;
-	&:not([data-anim_any]) {
+	/* &:not([data-anim_any]) {
 		text-wrap: balance;
-	}
+	} */
 }
 
 h3 {
@@ -42,6 +48,14 @@ h2 {
 	@apply text-[var(--heading-color)] dark:text-[var(--heading-color-dark)] !mt-0 !mb-[.7ch];
 	font-size: clamp(2.2rem, 8vw, 3.5rem);
 
+	&.bigger {
+		font-size: clamp(2.7rem, 8vw, 7rem);
+		/* font-weight: 900; */
+	}
+
+	&.thin {
+		font-weight: 400;
+	}
 	/* max-width: 600px !important; */
 	&.smaller {
 		font-size: clamp(2rem, 5vw, 4rem);
@@ -109,6 +123,11 @@ h3 {
 
 		.word {
 			overflow: visible;
+		}
+
+		strong {
+			font-weight: 700;
+			color: var(--cta-color);
 		}
 	}
 

@@ -2304,7 +2304,78 @@ add_filter('wpseo_sitemap_entries_per_page', function ($n, $post_type = null) {
 }, 10, 2);
 
 
+//! IMAGE RANDOM: preload image(s) in <head> for LCP optimization
+function image_random_preload()
+{
+	global $post;
+	if (!is_singular() || empty($post->post_content)) return;
+	if (!has_shortcode($post->post_content, 'image-random')) return;
 
+	if (!preg_match('/\[image-random\b([^\]]*)\]/i', $post->post_content, $sc_match)) return;
+
+	$sc_atts = shortcode_parse_atts($sc_match[1] ?? '');
+	$src_raw = isset($sc_atts['src']) ? $sc_atts['src'] : '';
+	if (empty($src_raw)) return;
+
+	$images = array_values(array_filter(array_map('trim', explode(',', $src_raw))));
+	if (empty($images)) return;
+
+	$is_random = !isset($sc_atts['random']) || !in_array($sc_atts['random'], ['no', '0', 'false'], true);
+	$base_url  = wp_upload_dir()['baseurl'];
+
+	if (!$is_random || count($images) === 1) {
+		echo '<link rel="preload" as="image" href="' . esc_url($base_url . '/' . ltrim($images[0], '/')) . '" fetchpriority="high">';
+	} else {
+		foreach ($images as $image) {
+			echo '<link rel="preload" as="image" href="' . esc_url($base_url . '/' . ltrim($image, '/')) . '">';
+		}
+	}
+}
+add_action('wp_head', 'image_random_preload', 2);
+
+//! IMAGE RANDOM SHORTCODE
+function image_random_shortcode($atts = [], $content = '')
+{
+	$atts = shortcode_atts([
+		'src'    => '',
+		'random' => 'yes',
+		'class'  => '',
+		'width'  => '',
+		'height' => '',
+	], $atts);
+
+	if (empty($atts['src'])) return '';
+
+	$images = array_values(array_filter(array_map('trim', explode(',', $atts['src']))));
+	if (empty($images)) return '';
+
+	$random      = !in_array($atts['random'], ['no', '0', 'false'], true);
+	$base_url    = wp_upload_dir()['baseurl'];
+	$class_attr  = !empty($atts['class']) ? ' class="' . esc_attr($atts['class']) . '"' : '';
+	$width_attr  = !empty($atts['width'])  ? ' width="'  . absint($atts['width'])  . '"' : '';
+	$height_attr = !empty($atts['height']) ? ' height="' . absint($atts['height']) . '"' : '';
+	$first_url   = esc_url($base_url . '/' . ltrim($images[0], '/'));
+
+	$output  = '<figure' . $class_attr . '>';
+	$output .= '<img src="' . $first_url . '" loading="eager" fetchpriority="high"' . $width_attr . $height_attr . ' alt="">';
+	$output .= '</figure>';
+
+	if ($random && count($images) > 1) {
+		$all_urls = array_map(function ($img) use ($base_url) {
+			return $base_url . '/' . ltrim($img, '/');
+		}, $images);
+
+		$output .= '<script>(function(){';
+		$output .= 'var i=document.currentScript.previousElementSibling.querySelector(\'img\');';
+		$output .= 'if(!i)return;';
+		$output .= 'var s=' . wp_json_encode($all_urls) . ';';
+		$output .= 'i.src=s[Math.floor(Math.random()*s.length)];';
+		$output .= '})();</script>';
+	}
+
+	return $output;
+}
+add_shortcode('image-random', 'image_random_shortcode');
 
 
 

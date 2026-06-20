@@ -16,7 +16,7 @@
 
 wp.domReady(() => {
 	/**
-	 * Add support for Tailwind Typography’s `lead` class via a block style.
+	 * Add support for Tailwind Typography's `lead` class via a block style.
 	 */
 	wp.blocks.registerBlockStyle('core/paragraph', {
 		name: 'lead',
@@ -31,3 +31,5 @@ wp.domReady(() => {
 	// 	label: 'Fancy Quote',
 	// } );
 });
+
+import './modules/block-attributes.js'

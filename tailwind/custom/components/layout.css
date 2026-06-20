@@ -1,9 +1,20 @@
-html,
-body {
+html {
 	position: relative;
 	margin-top: 0 !important;
 	scroll-behavior: smooth;
 	overflow-x: hidden !important;
+	transition: background 0.7s ease;
+
+	&.stop-scrolling {
+		overflow: hidden !important;
+	}
+}
+
+body {
+	position: relative;
+	margin-top: 0 !important;
+	scroll-behavior: smooth;
+	overflow-x: clip;
 	transition: background 0.7s ease;
 
 	&.stop-scrolling {
@@ -111,6 +122,28 @@ figure.alignfull {
 	svg {
 		width: 100%;
 		height: auto;
+	}
+}
+
+figure.full-height-col {
+	position: absolute;
+	height: 100% !important;
+	width: 100% !important;
+	img,
+	svg {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	@media only screen and (max-width: 767px) {
+		position: relative;
+		img,
+		svg {
+			width: 100%;
+			height: auto;
+			aspect-ratio: 16/9;
+		}
 	}
 }
 
@@ -287,6 +320,7 @@ figure {
 		.is-bg {
 			max-width: unset !important;
 			background-color: #343434;
+			overflow: clip;
 		}
 	}
 
@@ -768,6 +802,16 @@ section:has(.slider-bg) {
 			object-fit: cover;
 			max-width: unset;
 			user-select: none;
+		}
+	}
+
+	&.darken {
+		&::after {
+			content: "";
+			display: block;
+			position: absolute;
+			inset: 0;
+			background: var(--dark-overlay-from-bottom-for-text);
 		}
 	}
 }
@@ -2237,6 +2281,21 @@ nav.dot-navigation {
 	@media (hover: none) {
 		nav.dot-navigation {
 			display: none !important;
+		}
+	}
+}
+
+section.pct-section:has(> .sticky-scene) {
+	padding-block: 0 !important;
+
+	.sticky-scene {
+		.is-bg {
+			max-width: unset !important;
+			width: 100vw !important;
+			/* inset: 0 !important; */
+			left: 50%;
+			translate: -50% 0 !important;
+			/* translate: calc(var(--def-layout-x-padding) * -1) 0 !important; */
 		}
 	}
 }

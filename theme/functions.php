@@ -249,6 +249,11 @@ require get_template_directory() . '/inc/template-tags.php';
  */
 require get_template_directory() . '/inc/template-functions.php';
 
+/**
+ * Block Attributes — panel de atributos HTML en bloques Gutenberg.
+ */
+require get_template_directory() . '/inc/block-attributes.php';
+
 
 
 

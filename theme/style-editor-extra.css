@@ -62,7 +62,7 @@
 	.bg-dark h2,
 	.bg-dark h3,
 	.bg-dark p {
-  color: white !important;
+  /* color: white !important; */
 }
 
 .popup {

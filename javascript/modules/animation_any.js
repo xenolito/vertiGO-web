@@ -68,6 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			// console.log('repeat hardcoded', repeat)
 
+			const [animationName, animParam, originParam] = animation.split(',').map(s => s.trim())
+
 			this.header = targetDOMElement
 			this.whattoanim = whattoanim
 			this.repeat = repeat === 'false' || repeat === '0' ? false : true
@@ -78,7 +80,10 @@ document.addEventListener('DOMContentLoaded', () => {
 			this.duration = Number(duration)
 			this.autoplay = Number(autoplay)
 			this.stagger = stagger
-			this.animation = animation
+			this.animation = animationName
+			this.zoomStartScale = animParam !== undefined ? Number(animParam) : 1.2
+			this.rotateXStartAngle = animParam !== undefined ? Number(animParam) : 90
+			this.rotateXOriginY = originParam === 'bottom' ? '100%' : '0%'
 			this.chainanim = chainanim
 
 			this.nextanim = nextanim
@@ -165,6 +170,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			this.animation === 'slideFromTop' && this.setSlideTo('down')
 			this.animation === 'slideFromLeft' && this.setSlideTo('right')
 			this.animation === 'slideFromRight' && this.setSlideTo('left')
+			this.animation === 'zoomIn' && this.setZoomInAnimation()
+			this.animation === 'rotateX' && this.setRotateXAnimation()
 		}
 
 		setupChainedAnimations = () => {
@@ -478,6 +485,41 @@ document.addEventListener('DOMContentLoaded', () => {
 					'0'
 				)
 			})
+		}
+
+		setRotateXAnimation = () => {
+			gsap.set(this.header, {
+				opacity: 0,
+				rotationX: this.rotateXStartAngle,
+				transformPerspective: 800,
+				transformOrigin: `50% ${this.rotateXOriginY}`,
+			})
+			this.timeLine.fromTo(
+				this.header,
+				{ opacity: 0, rotationX: this.rotateXStartAngle },
+				{
+					opacity: 1,
+					rotationX: 0,
+					duration: this.duration,
+					delay: this.delay,
+					ease: 'power3.out',
+				}
+			)
+		}
+
+		setZoomInAnimation = () => {
+			gsap.set(this.header, { opacity: 0, scale: this.zoomStartScale })
+			this.timeLine.fromTo(
+				this.header,
+				{ opacity: 0, scale: this.zoomStartScale },
+				{
+					opacity: 1,
+					scale: 1,
+					duration: this.duration,
+					delay: this.delay,
+					ease: 'power3.out',
+				}
+			)
 		}
 
 		addDotPulsing = splitObj => {

@@ -13,6 +13,10 @@
 	}
 } */
 
+:root {
+	--heading-color: var(--heading-color-theme-A) !important;
+}
+
 .slider h1 {
 	font-family: var(--txt-slider-heading);
 	font-weight: 700;
@@ -25,7 +29,7 @@
 
 	@apply bg-gradient-A dark:bg-[var(--bg-color-theme-A-dark)];
 
-	*:not(textarea):not(a strong) {
+	*:not(textarea):not(a strong):not(em):not(em *) {
 		color: var(--txt-color-theme-A);
 	}
 
@@ -167,6 +171,17 @@ body:has(.home) {
 			.slider-cover {
 				background-color: white !important;
 				animation: flash 2s ease-out 1;
+			}
+		}
+
+		.is-bg {
+			&.darken-bottom {
+				&::after {
+					content: "";
+					position: absolute;
+					inset: 0;
+					background: var(--dark-overlay-from-bottom-for-text);
+				}
 			}
 		}
 	}
@@ -456,40 +471,56 @@ canvas.anim-bg {
 	}
 }
 
-.mz-dot-char {
+.pulsing-dot {
 	--dot-color: var(--main-color);
+	--dot-dim: 40px;
 	--dot-wave-width: 1px;
+	--dot-wave-distance: 1.5;
+	--dot-padding: 0.5rem;
+
 	position: relative;
 	z-index: 3;
-	display: inline-block;
-	width: calc(1ch * 0.3);
-	aspect-ratio: 1;
-	margin-left: 0.1ch;
+	display: grid;
+	place-content: center;
+	width: var(--dot-dim) !important;
+	height: var(--dot-dim) !important;
+	aspect-ratio: 1 / 1;
+	max-width: unset !important;
 
 	/* background-color: currentColor; */
 	background-color: var(--dot-color);
 	border-radius: 9999px;
 
+	> * {
+		padding: 0 !important;
+		margin: 0 !important;
+		grid-area: 1 / 1;
+		line-height: 1;
+	}
+
 	&::before {
 		content: "";
-		position: absolute;
 		display: block;
-		width: calc(1ch * 0.3);
+		grid-area: 1 / 1;
+		width: var(--dot-dim) !important;
+		height: var(--dot-dim) !important;
 		aspect-ratio: 1;
 		border: var(--dot-wave-width) solid var(--dot-color);
+		background-color: transparent;
 		border-radius: 9999px;
-		animation: ping 2s ease-out infinite;
+		animation: dot-wave 2s ease-out infinite;
 	}
 
 	&::after {
 		content: "";
-		position: absolute;
 		display: block;
-		width: calc(1ch * 0.3);
+		grid-area: 1 / 1;
+		width: var(--dot-dim) !important;
+		height: var(--dot-dim) !important;
 		aspect-ratio: 1;
 		border: var(--dot-wave-width) solid var(--dot-color);
 		border-radius: 9999px;
-		animation: ping 2s ease-out infinite 0.5s;
+		animation: dot-wave 2s ease-out infinite 0.5s;
 	}
 
 	&.filled {
@@ -497,6 +528,22 @@ canvas.anim-bg {
 		&::after {
 			background-color: var(--dot-color);
 		}
+	}
+}
+
+@keyframes dot-wave {
+	75%,
+	100% {
+		scale: calc(var(--dot-wave-distance, 1) * 3);
+		opacity: 0;
+	}
+	0% {
+		scale: 1;
+		opacity: 1;
+	}
+	100% {
+		scale: calc(var(--dot-wave-distance, 1) * 7);
+		opacity: 0;
 	}
 }
 

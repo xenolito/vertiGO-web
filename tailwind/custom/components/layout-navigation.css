@@ -90,7 +90,7 @@ body.fixed-header {
 		filter: contrast(0) brightness(100); /* white */
 		.color1 {
 			* {
-				fill: #0047ba;
+				fill: #343434;
 			}
 		}
 		.color2 {
@@ -98,11 +98,11 @@ body.fixed-header {
 				fill: #ff6700;
 			}
 		}
-		.color3 {
+		/* .color3 {
 			* {
 				fill: #000000;
 			}
-		}
+		} */
 		z-index: 10;
 	}
 }
