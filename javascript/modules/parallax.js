@@ -1,19 +1,23 @@
 /**
- * Parallax — efecto parallax vertical relativo a la posición inicial del elemento.
- * El elemento NO cambia de posición al inicializar. El desplazamiento se acumula
- * proporcionalmente al scroll desde el momento en que se carga la página.
+ * Parallax — efecto parallax vertical relativo a la posición del elemento en el viewport.
+ * El elemento no recibe transform mientras está por debajo del viewport.
+ * El desplazamiento es cero en el momento exacto de entrada y se acumula mientras
+ * el elemento está visible (o ya ha pasado), proporcional al depth y a la altura del viewport.
  *
  * Usage (Gutenberg block HTML attributes panel):
- *   data-parallax="0.3"  → depth 0.3 (por cada vh scrolled, mueve 0.3 vh)
- *   data-parallax="1"    → por cada vh scrolled, el elemento mueve 1 vh adicional
+ *   data-parallax="0.3"  → depth 0.3 (mueve 0.3 px por cada px scrolled en viewport)
+ *   data-parallax="1"    → mueve 1 px adicional por cada px de scroll en viewport
  *   data-parallax="0"    → sin movimiento
  *   data-parallax         → depth 0.5 por defecto
  *
- * Fórmula: y = -(scrollDelta × depth)
- *   El elemento se mueve depth px por cada px de scroll.
- *   depth=1 → 100% vh de travel sobre un scroll de 100vh.
+ * Fórmula cuando el elemento está en viewport o por encima:
+ *   y = -(vh - naturalTop) × depth
+ *   naturalTop = posición natural del top del elemento relativa al viewport (sin transform)
+ *   y = 0 cuando naturalTop = vh (elemento recién entrado por abajo)
  *
- * version: 1.1
+ * Cuando el elemento está por debajo del viewport: y = 0 (sin movimiento).
+ *
+ * version: 2.0
  * @license Copyright 2008-2025, Oscar Rey Tajes. All rights reserved.
  * @author: Oscar Rey Tajes, oscar.rey.tajes@gmail.com
  * © @xenolito 2025
@@ -36,13 +40,28 @@ const Parallax = class {
 	}
 
 	init = () => {
-		// Guardar scroll inicial → el offset se calcula SIEMPRE como delta desde aquí.
-		// Garantiza y=0 en el primer frame, sin importar la posición del elemento en la página.
-		const initialScroll = window.lenis?.scroll ?? window.scrollY ?? 0
+		// Capturar posición natural en el documento una sola vez (sin transform aplicado)
+		const rect = this.el.getBoundingClientRect()
+		const scrollNow = window.lenis?.scroll ?? window.scrollY
+		this._naturalDocTop = rect.top + scrollNow
 
 		this._onScroll = ({ scroll }) => {
-			gsap.set(this.el, { y: -(scroll - initialScroll) * this.depth })
+			const vh = window.innerHeight
+			// Posición natural del top del elemento en el viewport (sin transform)
+			const naturalTop = this._naturalDocTop - scroll
+
+			if (naturalTop >= vh) {
+				// Elemento aún por debajo del viewport: sin desplazamiento
+				gsap.set(this.el, { y: 0 })
+				return
+			}
+
+			// En viewport o ya pasado: y=0 en el momento de entrada (naturalTop = vh)
+			gsap.set(this.el, { y: -(vh - naturalTop) * this.depth })
 		}
+
+		// Calcular y aplicar posición inicial
+		this._onScroll({ scroll: window.lenis?.scroll ?? window.scrollY })
 
 		if (window.lenis) {
 			window.lenis.on('scroll', this._onScroll)

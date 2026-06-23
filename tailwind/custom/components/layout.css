@@ -200,12 +200,20 @@ figure.full-height-col {
 	@apply !mt-[var(--def-layout-x-padding)];
 }
 
+.margin-y {
+	margin-block: var(--def-layout-x-padding);
+}
+
 .padding-b {
 	@apply !pb-[var(--def-layout-x-padding)];
 }
 
 .padding-t {
 	@apply !pt-[var(--def-layout-x-padding)];
+}
+
+.padding-y {
+	padding-block: var(--def-layout-x-padding);
 }
 
 .border-t {
@@ -294,6 +302,43 @@ figure {
 	> * {
 		width: 100% !important;
 	}
+}
+
+.pct-3cols {
+	@apply !grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[var(--column-gap)];
+
+	> * {
+		width: 100% !important;
+	}
+}
+
+.pct-3cols-2-plus-1 {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: var(--card-padding);
+
+	@media only screen and (max-width: 1230px) {
+		/* background-color: red; */
+		grid-template-columns: repeat(2, 1fr);
+
+		> *:nth-child(3) {
+			grid-column: span 2;
+		}
+	}
+
+	@media only screen and (max-width: 767px) {
+		grid-template-columns: 1fr;
+
+		> *:nth-child(3) {
+			grid-column: span 1;
+		}
+	}
+}
+
+.pct-4cols {
+	display: grid;
+	gap: var(--card-padding);
+	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 }
 
 .rtl-mobile {
@@ -2296,6 +2341,71 @@ section.pct-section:has(> .sticky-scene) {
 			left: 50%;
 			translate: -50% 0 !important;
 			/* translate: calc(var(--def-layout-x-padding) * -1) 0 !important; */
+		}
+	}
+}
+
+/*! TESTIMONIALS SPLIDE  */
+[data-testimonials] {
+	padding-top: 0 !important;
+	margin-top: var(--default-section-vert-padding);
+
+	&:has(.splide__pagination) {
+		margin-bottom: var(--default-section-vert-padding);
+	}
+
+	.splide__track {
+		mask-image: var(--mask-testimonials-gradient);
+		cursor: grab;
+		/* overflow: unset !important; */
+	}
+
+	.splide__slide {
+		--bg-color: 255, 255, 255;
+		display: flex;
+		justify-content: center;
+		height: fit-content;
+
+		padding: var(--card-padding);
+
+		border: 1px solid rgba(var(--bg-color), 1);
+		/* border-radius: var(--card-border-radius); */
+
+		/* background: rgba(var(--bg-color), 0.141); */
+
+		box-shadow:
+			5px 5px 20px rgba(var(--bg-color), 0.05),
+			5px 5px 20px rgba(var(--bg-color), 0.2);
+	}
+
+	.splide__pagination {
+		bottom: unset;
+		margin-top: 1.2rem;
+		gap: 0.5rem;
+
+		.is-active {
+			opacity: 1;
+			transform: scale(1.25);
+		}
+	}
+}
+
+[data-testimonials] {
+	.splide__track {
+		mask-image: var(--mask-horiz-gradient);
+	}
+	.splide__pagination {
+		flex-flow: row !important;
+		list-style: none;
+		[role="presentation"] {
+			&::before {
+				display: none;
+			}
+			[role="tab"] {
+				&.is-active {
+					background: black;
+				}
+			}
 		}
 	}
 }

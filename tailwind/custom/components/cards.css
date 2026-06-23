@@ -24,11 +24,7 @@
 	container-type: inline-size;
 	container-name: pctcard;
 
-	@apply bg-white dark:bg-white/20 my-[var(--def-layout-x-padding)];
-
-	&:last-child {
-		margin-bottom: 0 !important;
-	}
+	@apply bg-white;
 
 	p:first-of-type {
 		margin-top: 0;
@@ -121,6 +117,34 @@
 		> figure.alignfull {
 			width: 100%;
 			max-width: unset !important;
+		}
+	}
+}
+
+:has(> .card.heading-numbered) {
+	counter-reset: card-counter;
+
+	.heading-numbered {
+		counter-increment: card-counter;
+
+		h2,
+		h3 {
+			&::before {
+				content: counter(card-counter);
+				display: inline-block;
+				width: 2.5ch;
+				font-weight: bold;
+				color: var(--main-color);
+			}
+		}
+
+		&:nth-child(-n + 9) {
+			h2,
+			h3 {
+				&::before {
+					content: "0" counter(card-counter);
+				}
+			}
 		}
 	}
 }

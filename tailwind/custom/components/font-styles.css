@@ -69,10 +69,15 @@ h2 {
 h3 {
 	@apply text-[var(--heading-color)] dark:text-[var(--heading-color-dark)] !mt-0 !mb-[.5ch];
 	font-size: clamp(1.6rem, 5vw, 2.5rem);
+
+	&.smaller {
+		font-size: clamp(1.4rem, 5vw, 2rem);
+	}
 }
 
 h4 {
-	@apply text-[var(--heading-color)] dark:text-[var(--heading-color-dark)] !mt-0 !mb-[.5ch];
+	@apply text-[var(--heading-color)] !mt-0 !mb-[.5ch];
+	font-size: clamp(1.2rem, 5vw, 1.6rem);
 }
 
 .subheader {
@@ -112,6 +117,10 @@ body .is-layout-constrained > :where(.alignright, .has-text-align-right, ) {
 h1,
 h2,
 h3 {
+	/* &:has(em) {
+		display: contents;
+	} */
+
 	em {
 		font-style: normal;
 		/* text-transform: uppercase; */

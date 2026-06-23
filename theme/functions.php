@@ -254,6 +254,94 @@ require get_template_directory() . '/inc/template-functions.php';
  */
 require get_template_directory() . '/inc/block-attributes.php';
 
+/**
+ * WP 7.0 bug: wp_unique_id_from_values() hashes the entire $parsed_block (including
+ * parent-layout context added by prior render_block_data filters), so the same block
+ * produces different hashes in a two-pass render (e.g. Yoast processes content in
+ * wp_head with no parent context → hash A in <style>; actual render has parent
+ * context → hash B in DOM → CSS never applied).
+ * Fix: replace with a content-only hash so the class is always deterministic.
+ */
+add_action( 'init', function() {
+	remove_filter( 'render_block_data', 'wp_render_custom_css_support_styles', 10 );
+
+	// Replacement: deterministic CSS-only hash so both render passes produce the same class.
+	// Static tracker avoids registering the same CSS twice via wp_add_inline_style.
+	add_filter( 'render_block_data', function( $parsed_block ) {
+		static $registered = [];
+		$custom_css = $parsed_block['attrs']['style']['css'] ?? null;
+		if ( ! is_string( $custom_css ) || '' === trim( $custom_css ) ) {
+			return $parsed_block;
+		}
+		$block_type = WP_Block_Type_Registry::get_instance()->get_registered( $parsed_block['blockName'] );
+		if ( ! block_has_support( $block_type, 'customCSS', true ) ) {
+			return $parsed_block;
+		}
+		if ( preg_match( '#</?\w+#', $custom_css ) ) {
+			return $parsed_block;
+		}
+		$class_name     = 'wp-custom-css-' . substr( md5( $custom_css ), 0, 8 );
+		$existing_class = $parsed_block['attrs']['className'] ?? null;
+		$updated_class  = is_string( $existing_class ) ? "$existing_class $class_name" : $class_name;
+		_wp_array_set( $parsed_block, array( 'attrs', 'className' ), $updated_class );
+		if ( ! isset( $registered[ $class_name ] ) ) {
+			$registered[ $class_name ] = true;
+			// WP_Theme_JSON::process_blocks_custom_css() is protected; replicate its output:
+			// wrap in :root :where() to match WP's low-specificity block CSS pattern.
+			$processed_css = ':root :where(.' . $class_name . '){' . trim( $custom_css ) . '}';
+			wp_register_style( 'wp-block-custom-css', false, array( 'global-styles' ) );
+			wp_add_inline_style( 'wp-block-custom-css', $processed_css );
+		}
+		return $parsed_block;
+	}, 10 );
+
+	// Snapshot CSS registered before wp_head prints it.
+	add_action( 'wp_head', function() {
+		global $wp_styles;
+		$GLOBALS['_pct_css_at_head'] = count( (array) $wp_styles->get_data( 'wp-block-custom-css', 'after' ) );
+	}, 7 ); // Before wp_print_styles (priority 8).
+
+	// Output any block CSS registered after wp_head (main render) in wp_footer.
+	add_action( 'wp_footer', function() {
+		global $wp_styles;
+		$all  = (array) $wp_styles->get_data( 'wp-block-custom-css', 'after' );
+		$late = array_slice( $all, $GLOBALS['_pct_css_at_head'] ?? count( $all ) );
+		if ( ! empty( $late ) ) {
+			echo '<style id="wp-block-custom-css-footer">' . implode( '', $late ) . '</style>';
+		}
+	}, 1 );
+}, 20 );
+
+/**
+ * Polylang: rewrite /#anchor menu links to home_url()/#anchor so they resolve
+ * correctly in any language (home_url() returns the translated home per language).
+ */
+add_filter( 'nav_menu_link_attributes', function( $atts ) {
+	if ( ! isset( $atts['href'] ) ) {
+		return $atts;
+	}
+	$parsed = wp_parse_url( $atts['href'] );
+	// Match both relative (/#anchor) and absolute root-anchor (https://site.com/#anchor)
+	// that Polylang converts relative URLs to before this filter runs.
+	$is_root_anchor = isset( $parsed['fragment'] )
+		&& ( ! isset( $parsed['path'] ) || $parsed['path'] === '/' )
+		&& ! isset( $parsed['query'] );
+	if ( $is_root_anchor ) {
+		$atts['href'] = home_url( '/' ) . '#' . $parsed['fragment'];
+	}
+	return $atts;
+}, 10, 1 );
+
+/**
+ * WP 6.9.1 regression: wp-block-custom-css declares global-styles as dependency
+ * but it's not always registered in multilingual contexts (Polylang).
+ */
+add_action( 'wp_enqueue_scripts', function() {
+	if ( ! wp_style_is( 'global-styles', 'registered' ) ) {
+		wp_register_style( 'global-styles', false, [], null );
+	}
+}, 20 );
+
 
 
 

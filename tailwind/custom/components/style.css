@@ -105,6 +105,34 @@
 	}
 }
 
+.theme-color-green {
+	--border-color: var(--heading-color-theme-green);
+
+	background: var(--bg-color-theme-green);
+
+	*:not(textarea):not(a strong):not(em):not(em *) {
+		color: var(--txt-color-theme-green);
+	}
+
+	h1,
+	h2,
+	h3,
+	h4 {
+		@apply text-[var(--heading-color-theme-green)] dark:text-[var(--heading-color-theme-green-dark)];
+	}
+
+	a {
+		color: white !important;
+
+		&.bt-inline {
+			background-color: white;
+			color: var(--main-color) !important;
+		}
+	}
+
+	/* background: var(--bg-color-theme-A); */
+}
+
 /*! SECTIONS SEPARATIONS - BORDERS */
 .pct-section.separation-line {
 	--line-dim: 1px;
@@ -500,11 +528,8 @@ canvas.anim-bg {
 
 	&::before {
 		content: "";
-		display: block;
-		grid-area: 1 / 1;
-		width: var(--dot-dim) !important;
-		height: var(--dot-dim) !important;
-		aspect-ratio: 1;
+		position: absolute;
+		inset: 0;
 		border: var(--dot-wave-width) solid var(--dot-color);
 		background-color: transparent;
 		border-radius: 9999px;
@@ -513,11 +538,8 @@ canvas.anim-bg {
 
 	&::after {
 		content: "";
-		display: block;
-		grid-area: 1 / 1;
-		width: var(--dot-dim) !important;
-		height: var(--dot-dim) !important;
-		aspect-ratio: 1;
+		position: absolute;
+		inset: 0;
 		border: var(--dot-wave-width) solid var(--dot-color);
 		border-radius: 9999px;
 		animation: dot-wave 2s ease-out infinite 0.5s;
@@ -1236,8 +1258,8 @@ body.single-evento {
 			height: 50%;
 			position: absolute;
 			top: 50%;
-			@apply bg-gradient-footer;
-			/* background-image: linear-gradient(to top, rgb(255, 0, 0), rgb(252, 0, 141) 100%); */
+			/* @apply bg-gradient-footer; */
+			background-image: linear-gradient(to top, black, #343434 100%);
 		}
 	}
 
@@ -1256,8 +1278,49 @@ body.home .sections .pct-section#documentos {
 	padding-top: 3rem;
 	/* margin-top: 3rem; */
 	/* @apply bg-gradient-footer-3; */
-	background: #f5350f;
+	background: black;
 	.pct-copyright {
+		> * {
+			width: initial;
+		}
+
+		.company-logo {
+			svg {
+				max-width: 300px;
+			}
+		}
+
+		.copy {
+			.copy-year {
+				display: flex;
+				flex-flow: row;
+				justify-content: center;
+				gap: 1ch;
+
+				> * {
+					display: contents;
+					width: initial;
+				}
+			}
+			.copy-legal {
+				display: flex;
+				flex-flow: row;
+				gap: 1ch;
+				margin-bottom: 1rem;
+
+				> * {
+					display: contents;
+					width: initial;
+					&:not(:last-of-type) {
+						&::after {
+							content: "|";
+							padding: 0 0ch;
+						}
+					}
+				}
+			}
+		}
+
 		a {
 			color: white !important;
 		}

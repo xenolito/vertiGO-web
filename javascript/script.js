@@ -27,6 +27,7 @@ import './modules/smooth_scroll'
 import './modules/scrollTrigger_pin'
 import './modules/stickysection'
 import './modules/parallax'
+import './modules/testimonials-splide'
 // import './modules/scrollTriggerAnim_test'
 // import './modules/animation_scrollTriggered'
 // import './modules/animation_counter'
@@ -53,6 +54,7 @@ import './modules/slider_videoBg_trigger_anim'
 import './modules/navigation_dot'
 import './modules/scrollToAName'
 import './modules/image_mask_animated'
+import './modules/lang_switcher'
 
 document.addEventListener('DOMContentLoaded', () => {
 	checkIfTouchDevice()

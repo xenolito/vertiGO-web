@@ -32,6 +32,8 @@ add_action('init', function () {
 });
 
 
+
+
 /*------------------------------------------------------------------------------------------------------*
             //! DISABLE SERACH FEATURES
 \*------------------------------------------------------------------------------------------------------*/
@@ -424,8 +426,19 @@ if (!class_exists('Main_Nav_Walker')) {
 				and $attributes .= ' target="' . esc_attr($item->target) . '"';
 			! empty($item->xfn)
 				and $attributes .= ' rel="'    . esc_attr($item->xfn) . '"';
-			! empty($item->url)
-				and $attributes .= ' href="'   . esc_attr($item->url) . '"';
+
+			$item_url = $item->url;
+			if (! empty($item_url)) {
+				$parsed = wp_parse_url($item_url);
+				if (
+					isset($parsed['fragment'])
+					&& (! isset($parsed['path']) || $parsed['path'] === '/')
+					&& ! isset($parsed['query'])
+				) {
+					$item_url = home_url('/') . '#' . $parsed['fragment'];
+				}
+				$attributes .= ' href="' . esc_attr($item_url) . '"';
+			}
 
 
 			// if ( $has_shortcode ) {
@@ -804,9 +817,9 @@ function pictau_social($atts)
 
 	$output = '<div class="social-icons">';
 
-	$output .= '<a class="social-item" href="https://www.linkedin.com/company/enterprise-quality-management/" aria-label="linkedin" target="_blank"><i class="pcticon-linkedin"></i></a>';
-	$output .= '<a class="social-item" href="https://twitter.com/enterpriseqm" aria-label="twitter/X" target="_blank"><i class="pcticon-twitter-x"></i></a>';
-	$output .= '<a class="social-item" href="https://www.youtube.com/channel/UC4Q7JlsKFLvU7SomNtoUhOA" aria-label="facebook" target="_blank"><i class="pcticon-youtube"></i></a>';
+	$output .= '<a class="social-item" href="https://www.linkedin.com/company/#" aria-label="linkedin" target="_blank"><i class="pcticon-linkedin"></i></a>';
+	$output .= '<a class="social-item" href="https://twitter.com/#" aria-label="twitter/X" target="_blank"><i class="pcticon-twitter-x"></i></a>';
+	$output .= '<a class="social-item" href="https://www.youtube.com/channel/#" aria-label="youtube" target="_blank"><i class="pcticon-youtube"></i></a>';
 
 
 	$output .= '</div>';
@@ -847,12 +860,16 @@ function pictau_copyright($atts)
 								<div class="copy">
 									<ul>
 										<li>© ' . apply_shortcodes('[myYear]') . ' ' . get_bloginfo('name') . '</li>
+										<li><a href="#">Privacy Policy</a></li>
 									</ul>
 								</div>
 							</div>';
 
 
 	echo $output;
+
+
+
 	return;
 }
 
@@ -1373,6 +1390,38 @@ function inline_svg($atts, $content)
 
 add_shortcode('svg', 'inline_svg');
 
+
+//! SITE LOGO — renders custom_logo inline if SVG, otherwise as <img>
+function site_logo_shortcode($atts = [])
+{
+	$atts = shortcode_atts(array(
+		'class'  => '',
+		'width'  => '',
+		'height' => '',
+	), $atts);
+
+	$logo_id = get_theme_mod('custom_logo');
+	if (!$logo_id) return '';
+
+	if (get_post_mime_type($logo_id) === 'image/svg+xml') {
+		$file_path = get_attached_file($logo_id);
+		$svg = $file_path ? file_get_contents($file_path) : false;
+		if (!$svg) return '';
+
+		$processor = new WP_HTML_Tag_Processor($svg);
+		$processor->next_tag('svg');
+		if ($atts['class'])  $processor->add_class($atts['class']);
+		if ($atts['width'])  $processor->set_attribute('width', $atts['width']);
+		if ($atts['height']) $processor->set_attribute('height', $atts['height']);
+
+		return preg_replace('/<\?xml.*?\?>/s', '', $processor->get_updated_html());
+	}
+
+	return wp_get_attachment_image($logo_id, 'full', false, array(
+		'class' => $atts['class'] ?: 'site-logo',
+	));
+}
+add_shortcode('site-logo', 'site_logo_shortcode');
 
 
 
@@ -1895,7 +1944,8 @@ function get_pictau_blocks_ID_by_title($title)
 		array(
 			// 'name'      => 'footer', // by post slug
 			'title'      => $title, // by post title
-			'post_type' => 'pictau_blocks' // post type of your preference
+			'post_type' => 'pictau_blocks', // post type of your preference
+			'lang'       => '', // disable Polylang language filter so we always find the post
 		)
 	);
 	// First/lowest ID taken if many objects
@@ -1911,7 +1961,7 @@ function pictau_block_cpt_id_by_title($atts = [], $content = '')
 
 	$atts = shortcode_atts(array(
 		"title"	=> null,
-		"mostrar"	=> null
+		"mostrar"	=> "si"
 	), $atts);
 	$title = $atts['title'];
 	$mostrar = $atts['mostrar'];
@@ -1922,6 +1972,13 @@ function pictau_block_cpt_id_by_title($atts = [], $content = '')
 		$content_id = get_pictau_blocks_ID_by_title($title);
 
 		if ($content_id) {
+			// If Polylang is active, swap to the translated version (falls back to original if no translation)
+			if (function_exists('pll_current_language')) {
+				$translated_id = pll_get_post($content_id, pll_current_language());
+				if ($translated_id) {
+					$content_id = $translated_id;
+				}
+			}
 			$output .= do_shortcode('[pictau-blocks id="' . $content_id . '"]');
 		}
 	}

@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "/Users/orey/.nvm/versions/node/v22.17.1/bin/node",
+      "args": [
+        "/Users/orey/.nvm/versions/node/v22.17.1/lib/node_modules/@playwright/mcp/cli.js",
+        "--browser",
+        "chrome",
+        "--executable-path",
+        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        "--caps",
+        "devtools"
+      ]
+    }
+  }
+}

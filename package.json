@@ -63,6 +63,7 @@
 	},
 	"dependencies": {
 		"@lottiefiles/dotlottie-web": "^0.17.0",
+		"@splidejs/splide": "^4.1.4",
 		"@studio-freight/lenis": "^1.0.39",
 		"@xenolito/console-signature": "^2.0.0",
 		"countup.js": "^2.8.0",

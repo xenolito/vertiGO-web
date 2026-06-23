@@ -321,6 +321,7 @@
 :has(> .sticky-scene) {
 	overflow: clip;
 }
+
 .sticky-scene {
 	position: sticky;
 	top: 0;

@@ -60,8 +60,8 @@
 	--txt-color-theme-B: white;
 
 	--bg-color-theme-green: hsl(154, 43%, 46%);
-	--heading-color-theme-Blue: hsl(240, 37%, 12%);
-	--txt-color-theme-Blue: hsl(240, 37%, 12%);
+	--heading-color-theme-green: hsl(240, 37%, 12%);
+	--txt-color-theme-green: hsl(240, 36%, 17%);
 
 	--bg-color-theme-Red: #d92727;
 	--bg-color-theme-Red-dark: #d92727;
@@ -270,7 +270,7 @@
 		hsl(207deg 100% 50%) 100%
 	);
 
-	--heading-default-grad-bg: linear-gradient(to top, rgb(252, 0, 141), rgb(252, 91, 42) 100%);
+	--heading-default-grad-bg: linear-gradient(to top, var(--main-color), rgb(193, 63, 24) 100%);
 
 	/* ? THEME COLOR SCHEME RED */
 	--header-red-grad-bg: linear-gradient(
@@ -463,6 +463,8 @@
 	/* --bright-color: red; */
 	/* --border-color: #b2c6d7; */
 	--border-color: #c1cdd5;
+
+	--mask-horiz-gradient: radial-gradient(50% 250% at 50% 50%, #fff 70%, transparent 100%);
 }
 
 body {
