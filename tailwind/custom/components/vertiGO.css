@@ -196,3 +196,10 @@
 	justify-content: center;
 	display: flex;
 }
+
+.pct-section.section-content {
+	min-height: 100svh !important;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}

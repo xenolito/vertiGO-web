@@ -146,7 +146,7 @@ h3 {
 		.line:not(:first-of-type) {
 			margin-top: -0.35ch;
 		}
-		line-height: 2ch;
+		line-height: 1.77ch;
 	}
 
 	.char {

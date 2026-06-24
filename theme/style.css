@@ -3176,7 +3176,7 @@ h1[data-split_text]:has(em),
 	h3[data-split_text]:has(em),
 	h3[data-anim_header]:has(em),
 	h3[data-anim_any]:has(em) {
-  line-height: 2ch;
+  line-height: 1.77ch;
 }
 
 h1 .char, h2 .char, h3 .char {
@@ -11329,6 +11329,13 @@ button.swiper-pagination-bullet{
   min-height: 100svh;
   justify-content: center;
   display: flex;
+}
+
+.pct-section.section-content {
+  min-height: 100svh !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /**
