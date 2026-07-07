@@ -5086,6 +5086,10 @@ figure.full-height-col img,
   border-top-color: rgb(255 255 255 / 0.5);
 }
 
+body.home .hide-on-home {
+  display: none !important;
+}
+
 .stroke-width-thin:has(svg) * {
   stroke-width: 2;
 }

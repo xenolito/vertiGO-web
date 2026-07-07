@@ -73,32 +73,34 @@ document.addEventListener('DOMContentLoaded', () => {
 		return (origin === linkElement.origin && pathname === linkElement.pathname) ?? false
 	}
 
+	const doScrollToAnchor = (target) => {
+		const filteredTarget = target === 'top' ? false : target
+		if (document.querySelector(`#${target}`) || !filteredTarget) {
+			scrollWithEngine({
+				target: filteredTarget ? `#${filteredTarget}` : 0,
+				offset: 0,
+			})
+		}
+	}
+
 	aNames.forEach(a => {
 		const hrefValue = a.getAttribute('href')
+		const hashPart = hrefValue.split('#')[1]
 
-		if (hrefValue.split('#')[1].length && linkToSamePage(a)) {
-			// const aTarget = console.log(hrefValue, hrefValue.split('#')[1])
+		if (!hashPart?.length) return
+
+		if (linkToSamePage(a)) {
 			a.addEventListener('click', e => {
 				e.preventDefault()
 				const href = e.currentTarget.getAttribute('href')
 				if (!href || !href.includes('#')) return
-				const target = href.split('#')[1]
-
-				const filteredTarget = target === 'top' ? false : target
-
-				//automatic offset if WP menu is present
-				const offset_WP_menu = document.querySelector('#masthead')?.getBoundingClientRect() ?? { height: 0 }
-
-				if (document.querySelector(`#${target}`) || !filteredTarget) {
-					scrollWithEngine({
-						target: filteredTarget ? `#${filteredTarget}` : 0,
-						// offset: offset_WP_menu.height ?? 0,
-						offset: 0,
-						onComplete: () => {
-							history.pushState(null, null, `#${target}`)
-						},
-					})
-				}
+				doScrollToAnchor(href.split('#')[1])
+			})
+		} else if (document.querySelector(`#${hashPart}`)) {
+			// Link apunta a otra URL pero el elemento destino existe en esta página
+			a.addEventListener('click', e => {
+				e.preventDefault()
+				doScrollToAnchor(hashPart)
 			})
 		}
 	})
@@ -110,4 +112,15 @@ document.addEventListener('DOMContentLoaded', () => {
 			offset: 0,
 		})
 	}
+
+	// Preserve hash when switching languages with Polylang
+	document.querySelectorAll('.lang-switcher a').forEach(a => {
+		a.addEventListener('click', e => {
+			const currentHash = window.location.hash
+			if (currentHash && !new URL(a.href).hash) {
+				e.preventDefault()
+				window.location.href = a.href + currentHash
+			}
+		})
+	})
 })

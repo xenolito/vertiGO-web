@@ -221,6 +221,12 @@ figure.full-height-col {
 	@apply border-t-black dark:border-t-white/50;
 }
 
+body.home {
+	.hide-on-home {
+		display: none !important;
+	}
+}
+
 .stroke-width-thin:has(svg) {
 	* {
 		stroke-width: 2;
