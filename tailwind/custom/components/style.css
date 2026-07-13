@@ -27,8 +27,6 @@
 	--border-color: var(--heading-color-theme-A);
 	--border-color-dark: var(--heading-color-theme-A-dark);
 
-	@apply bg-gradient-A dark:bg-[var(--bg-color-theme-A-dark)];
-
 	*:not(textarea):not(a strong):not(em):not(em *) {
 		color: var(--txt-color-theme-A);
 	}

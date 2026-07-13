@@ -24,7 +24,7 @@
 		?>
 	</header><!-- .entry-header -->
 
-	<?php pictau_post_thumbnail(); ?>
+	<?php echo pictau_post_thumbnail(); ?>
 
 	<div <?php pictau_content_class( 'entry-content' ); ?>>
 		<?php

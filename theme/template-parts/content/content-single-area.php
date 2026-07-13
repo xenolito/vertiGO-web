@@ -17,7 +17,7 @@ $pods = pods( $post_type, get_the_id() );
 	<header class="entry-header area has-bg only-img full-vh" data-parallax_header data-parallax_header_whattoanim=".is-bg">
 	<?php
 		if ( has_post_thumbnail()) {
-			pictau_post_thumbnail('is-bg only-img');
+			echo pictau_post_thumbnail('is-bg only-img');
 	?>
 			<div class="header-dark-overlay"></div>
 	<?php

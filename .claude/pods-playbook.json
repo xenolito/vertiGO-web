@@ -401,5 +401,43 @@
       "file_type": "any",
       "file_format_type": "multi"
     }
+  },
+  {
+    "#": "27. Extender el post type nativo 'post' con Pods (migración de blog)",
+    "action": "save_pod",
+    "params": {
+      "name": "post",
+      "object": "post",
+      "label": "Entradas",
+      "type": "post_type",
+      "storage": "meta",
+      "create_extend": "extend"
+    }
+  },
+  {
+    "#": "28. Grupo de campos para entradas del blog",
+    "action": "save_group",
+    "params": {
+      "pod": "post",
+      "name": "datos_entrada",
+      "label": "Datos de la entrada",
+      "weight": 0
+    }
+  },
+  {
+    "#": "29. Campo categoria_principal (pick > taxonomy > category, single) en post — categoría a destacar en listado y ficha del blog",
+    "action": "save_field",
+    "params": {
+      "pod": "post",
+      "group": "datos_entrada",
+      "name": "categoria_principal",
+      "label": "Categoría principal",
+      "description": "Categoría a destacar en el listado del blog y en la entrada. Si se deja vacía, se usa la primera categoría asignada.",
+      "type": "pick",
+      "weight": 0,
+      "pick_object": "taxonomy",
+      "pick_val": "category",
+      "pick_format_type": "single"
+    }
   }
 ]

@@ -34,7 +34,7 @@ if (function_exists('pods')) {
 	<header class="entry-header has-bg <?php echo $has_featured_img_cssClass ?>">
 		<?php
 		if (has_post_thumbnail()) {
-			pictau_post_thumbnail('is-bg only-img');
+			echo pictau_post_thumbnail('is-bg only-img');
 		?>
 			<div class="header-dark-overlay"></div>
 		<?php

@@ -19,7 +19,7 @@ $category = ($pods->field('webinar_category')) ? $pods->field('webinar_category'
 	?>
 	<div class="featured-img">
 	<?php
-		pictau_post_thumbnail();
+		echo pictau_post_thumbnail();
 	?>
 	</div>
 	<div class="description">
