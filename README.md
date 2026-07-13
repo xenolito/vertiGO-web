@@ -73,6 +73,7 @@ Implementation notes:
 2. Animate an internal numeric state with GSAP
 3. On each `onUpdate`, call `lenis.scrollTo(stateY, { immediate: true, force: true })`
 4. Prevent overlap by killing the previous active tween before starting a new one
+5. Call `window.lenis.stop()` right before starting the tween, and `window.lenis.start()` on `onComplete`/`onInterrupt` — trackpad momentum (residual `wheel` events fired by the OS for a second or two after the user lifts their fingers) was still being processed by Lenis's own `scrollTo` while our tween pushed `scrollTo({ force: true })` each frame, so the two fought for control and the page drifted a bit right after landing on the anchor. With `isStopped`, Lenis ignores wheel/touch entirely, but our own calls still work because they pass `force: true` — same pattern already used to freeze background scroll while a modal is open.
 
 If you update `lenis` or `gsap`, validate anchor clicks and dot navigation behavior to ensure scroll starts immediately and easing remains consistent.
 
