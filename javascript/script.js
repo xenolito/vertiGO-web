@@ -55,6 +55,7 @@ import './modules/navigation_dot'
 import './modules/scrollToAName'
 import './modules/image_mask_animated'
 import './modules/lang_switcher'
+import './modules/social_share_buttons'
 
 document.addEventListener('DOMContentLoaded', () => {
 	checkIfTouchDevice()
