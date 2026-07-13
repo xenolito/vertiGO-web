@@ -34,18 +34,6 @@ body.fixed-header {
 			padding-top: var(--desktop-space-top);
 		}
 
-		.above-header-wrap {
-			.menu-item a {
-				color: white;
-			}
-		}
-
-		.mobile-menu-switcher {
-			span {
-				background: white;
-			}
-		}
-
 		&.scrolledHeader {
 			@apply text-[var(--scrolled-menu-txt-color)];
 			.mobile-menu-switcher {
@@ -70,18 +58,33 @@ body.fixed-header {
 			}
 		}
 	}
+
+	/*! Only pages with an element marked .transparent-header (e.g. the home hero) start with a see-through header. */
+	#page:has(.transparent-header) {
+		#masthead:not(.scrolledHeader) {
+			.above-header-wrap {
+				.menu-item a {
+					color: white;
+				}
+			}
+
+			.mobile-menu-switcher {
+				span {
+					background: white;
+				}
+			}
+		}
+	}
 }
 
 .main-header-wrap {
-	color: white;
 	--mobile-mt: 0;
 	/* --border-color: hsla(0, 0%, 100%, 0.8); */
 	--border-color: transparent;
 	@apply mt-[var(--mobile-mt)] lg:mt-0;
 
 	backdrop-filter: blur(7.5px);
-	/* background-color: var(--header-scrolled-color); */
-	background-color: var(--transparent-header-bg-color-light);
+	@apply bg-[var(--header-scrolled-color)] dark:bg-[var(--header-scrolled-color-dark)];
 
 	border-top-color: var(--border-color);
 	border-bottom-color: var(--border-color);
@@ -96,7 +99,6 @@ body.fixed-header {
 	}
 
 	.logo-brand {
-		filter: contrast(0) brightness(100); /* white */
 		.color1 {
 			* {
 				fill: #343434;
@@ -113,6 +115,20 @@ body.fixed-header {
 			}
 		} */
 		z-index: 10;
+	}
+}
+
+/*! Only pages with an element marked .transparent-header (e.g. the home hero) start with a see-through header. */
+#page:has(.transparent-header) {
+	#masthead:not(.scrolledHeader) {
+		.main-header-wrap {
+			color: white;
+			background-color: var(--transparent-header-bg-color-light);
+
+			.logo-brand {
+				filter: contrast(0) brightness(100); /* white */
+			}
+		}
 	}
 }
 

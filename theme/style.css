@@ -4303,14 +4303,6 @@ body.fixed-header #masthead > div {
   padding-top: var(--desktop-space-top);
 }
 
-body.fixed-header #masthead .above-header-wrap .menu-item a {
-  color: white;
-}
-
-body.fixed-header #masthead .mobile-menu-switcher span {
-  background: white;
-}
-
 body.fixed-header #masthead.scrolledHeader {
   color: var(--scrolled-menu-txt-color);
 }
@@ -4355,8 +4347,17 @@ body.fixed-header #masthead.scrolledHeader .main-header-wrap .logo-brand {
   /* filter: none; */
 }
 
-.main-header-wrap {
+/*! Only pages with an element marked .transparent-header (e.g. the home hero) start with a see-through header. */
+
+body.fixed-header #page:has(.transparent-header) #masthead:not(.scrolledHeader) .above-header-wrap .menu-item a {
   color: white;
+}
+
+body.fixed-header #page:has(.transparent-header) #masthead:not(.scrolledHeader) .mobile-menu-switcher span {
+  background: white;
+}
+
+.main-header-wrap {
   --mobile-mt: 0;
   /* --border-color: hsla(0, 0%, 100%, 0.8); */
   --border-color: transparent;
@@ -4372,8 +4373,14 @@ body.fixed-header #masthead.scrolledHeader .main-header-wrap .logo-brand {
 .main-header-wrap {
   -webkit-backdrop-filter: blur(7.5px);
           backdrop-filter: blur(7.5px);
-  /* background-color: var(--header-scrolled-color); */
-  background-color: var(--transparent-header-bg-color-light);
+  background-color: var(--header-scrolled-color);
+}
+
+:is(:where(.dark) .main-header-wrap) {
+  background-color: var(--header-scrolled-color-dark);
+}
+
+.main-header-wrap {
   border-top-color: var(--border-color);
   border-bottom-color: var(--border-color);
   border-top-width: 1px;
@@ -4424,15 +4431,12 @@ body.fixed-header #masthead.scrolledHeader .main-header-wrap .logo-brand {
 }
 
 .main-header-wrap .logo-brand {
-  filter: contrast(0) brightness(100);
   /* .color3 {
 			* {
 				fill: #000000;
 			}
 		} */
 }
-
-/* white */
 
 .main-header-wrap .logo-brand .color1 * {
   fill: #343434;
@@ -4444,6 +4448,18 @@ body.fixed-header #masthead.scrolledHeader .main-header-wrap .logo-brand {
 
 .main-header-wrap .logo-brand {
   z-index: 10;
+}
+
+/*! Only pages with an element marked .transparent-header (e.g. the home hero) start with a see-through header. */
+
+#page:has(.transparent-header) #masthead:not(.scrolledHeader) .main-header-wrap {
+  color: white;
+  background-color: var(--transparent-header-bg-color-light);
+}
+
+#page:has(.transparent-header) #masthead:not(.scrolledHeader) .main-header-wrap .logo-brand {
+  filter: contrast(0) brightness(100);
+  /* white */
 }
 
 body.header-width-full .main-header-content,
@@ -9048,14 +9064,6 @@ html::-webkit-scrollbar-track {
 .theme-color-A {
   --border-color: var(--heading-color-theme-A);
   --border-color-dark: var(--heading-color-theme-A-dark);
-  background-image: linear-gradient(to top, rgb(252, 0, 141), rgb(252, 91, 42) 100%);
-}
-
-:is(:where(.dark) .theme-color-A) {
-  background-color: var(--bg-color-theme-A-dark);
-}
-
-.theme-color-A {
   /* background: var(--bg-color-theme-A); */
 }
 
