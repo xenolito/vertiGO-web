@@ -185,34 +185,25 @@ endif;
 
 if ( ! function_exists( 'pictau_post_thumbnail' ) ) :
 	/**
-	 * Displays an optional post thumbnail, wrapping the post thumbnail in an
-	 * anchor element except when viewing a single post.
+	 * Returns the HTML markup for an optional post thumbnail.
 	 */
-	function pictau_post_thumbnail($classes = false) {
-		$classList = $classes ? $classes : '';
+	function pictau_post_thumbnail($classes = false, $size = false, $viewTransition = false, $link = false) {
+		$classList = $classes ? 'class="' . $classes . '"' : '';
 		if ( ! pictau_can_show_post_thumbnail() ) {
 			return;
 		}
 
-		if ( is_singular() ) :
-			?>
+		$viewTransitionID = $viewTransition ? 'style="view-transition-name: thumb-' . get_post_thumbnail_id() . '"' : '';
 
-			<figure class="<?php echo $classList; ?>">
-				<?php the_post_thumbnail(); ?>
-			</figure><!-- .post-thumbnail -->
-
-			<?php
-		else :
-			?>
-
-			<figure class="<?php echo $classList; ?>">
-				<!--a href="<?php the_permalink(); ?>" aria-hidden="true" tabindex="-1"-->
-					<?php the_post_thumbnail(); ?>
-				<!--/a-->
-			</figure>
-
-			<?php
-		endif; // End is_singular().
+		return '<figure ' . $classList . ' ' . $viewTransitionID . '>' .
+			get_the_post_thumbnail(
+				get_the_ID(),
+				$size ? $size : 'post-thumbnail',
+				array(
+					'class' => 'wp-post-image',
+				)
+			) .
+			'</figure>';
 	}
 endif;
 

@@ -34,7 +34,7 @@ if (function_exists('pods')) {
 		<?php
 		}
 		else if ( has_post_thumbnail()) {
-			pictau_post_thumbnail('is-bg only-img');
+			echo pictau_post_thumbnail('is-bg only-img');
 			?>
 			<div class="header-dark-overlay"></div>
 			<?php
@@ -92,6 +92,8 @@ if (function_exists('pods')) {
 					<?php
 		the_content();
 
+		get_template_part('template-parts/content/social_share_buttons', null, array('single_post' => true));
+
 		/*
 		wp_link_pages(
 			array(
@@ -115,5 +117,9 @@ if (function_exists('pods')) {
 
 
 	</div><!-- .entry-content -->
+
+	<?php
+	get_template_part('template-parts/content/related_posts', null, array('related_by' => 'category'));
+	?>
 
 </article><!-- #post-<?php the_ID(); ?> -->

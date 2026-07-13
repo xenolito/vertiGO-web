@@ -28,7 +28,7 @@ $custom_header_img = $pods->field('custom_header_img')  ? $pods->field('custom_h
 		<?php
 		}
 		else if ( has_post_thumbnail()) {
-			pictau_post_thumbnail('is-bg only-img');
+			echo pictau_post_thumbnail('is-bg only-img');
 			?>
 			<div class="header-dark-overlay"></div>
 			<?php
