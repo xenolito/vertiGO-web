@@ -13,7 +13,7 @@ $subheader = false;
 
 if (function_exists('pods')) {
 	$pods = pods($post_type, get_the_id());
-	$subheader = $pods->field('subheader') !== '' ? $pods->field('subheader') : false;
+	$subheader = $pods && $pods->field('subheader') !== '' ? $pods->field('subheader') : false;
 }
 
 
@@ -39,9 +39,9 @@ get_header();
 					} else {
 					?>
 						<div class="header-default-bg">
-							<?php //echo do_shortcode('[anim-bg color="#8ba939" origin="95%,90%" speed="1.5" size="1500"]'); 
+							<?php //echo do_shortcode('[anim-bg color="#8ba939" origin="95%,90%" speed="1.5" size="1500"]');
 							?>
-							<?php //echo do_shortcode('[anim-bg color="#4e03e7" origin="95%,90%" speed="1.5" size="1500"]'); 
+							<?php //echo do_shortcode('[anim-bg color="#4e03e7" origin="95%,90%" speed="1.5" size="1500"]');
 							?>
 						</div>
 					<?php
