@@ -1738,6 +1738,11 @@ body.blog .category-entries .category-link a, body.single-post .category-entries
   flex-flow: row nowrap;
   align-items: center;
   gap: 1ch;
+  color: var(--link-color) !important;
+}
+
+body.blog .category-entries .category-link a *, body.single-post .category-entries .category-link a *, body.archive .category-entries .category-link a *, body.home .category-entries .category-link a * {
+  color: var(--link-color) !important;
 }
 
 body.blog .category-entries ~ .category-entries::after, body.single-post .category-entries ~ .category-entries::after, body.archive .category-entries ~ .category-entries::after, body.home .category-entries ~ .category-entries::after {
@@ -2005,7 +2010,14 @@ body.archive.category #main > article > .entry-header h1 {
 body.archive.category #main > article > .entry-header .entry-header-content {
   display: flex;
   flex-flow: column;
+  justify-content: center;
+  align-items: center;
   padding-top: var(--default-section-vert-padding);
+}
+
+body.archive.category #main > article > .entry-header .entry-header-content .goback-link {
+  width: -moz-fit-content;
+  width: fit-content;
 }
 
 body.archive.category #main > article > .entry-header .entry-header-content .goback-link a {
@@ -2018,6 +2030,10 @@ body.archive.category #main > article > .entry-header .entry-header-content .gob
 body.archive.category #main > article > .entry-header .entry-header-content .goback-link a svg {
   order: -1;
   rotate: 180deg;
+}
+
+body.archive.category .pct-section.category-entries {
+  padding-top: 0 !important;
 }
 
 section:has(> .related-posts)::after {
@@ -2138,10 +2154,11 @@ body.archive.post-type-archive-webinar-ondemand .navigation.pagination, body.arc
 /*! Posts Archive Pagination */
 
 .navigation.pagination {
-  --item-dim: 5ch;
+  --item-dim: 3ch;
   display: flex;
   justify-content: center;
   font-size: clamp(1rem, 5vw, 1.4rem);
+  margin-top: var(--default-section-vert-padding);
 }
 
 .navigation.pagination .screen-reader-text {
@@ -2176,8 +2193,6 @@ body.archive.post-type-archive-webinar-ondemand .navigation.pagination, body.arc
   width: calc(var(--item-dim));
   aspect-ratio: 1;
   z-index: 5;
-  padding: 1rem;
-  padding-bottom: 1rem !important;
   background: var(--main-color);
   border-radius: 50%;
   background-image: none !important;
@@ -3354,11 +3369,11 @@ h1 {
 }
 
 h1 {
-  font-size: clamp(2.7rem, 8vw, 7rem);
+  font-size: clamp(2.7rem, 8vw, 4em);
 }
 
 h1.smaller {
-  font-size: clamp(2.6rem, 5vw, 4rem);
+  font-size: clamp(2.6rem, 5vw, 3rem);
 }
 
 h2 {

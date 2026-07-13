@@ -37,10 +37,10 @@ h3 {
 h1 {
 	/* @apply txt-[var(--heading-color)] dark:txt-[var(--heading-color-dark)]; */
 	@apply text-[var(--heading-color)] dark:text-[var(--heading-color-dark)] !mt-0;
-	font-size: clamp(2.7rem, 8vw, 7rem);
+	font-size: clamp(2.7rem, 8vw, 4em);
 
 	&.smaller {
-		font-size: clamp(2.6rem, 5vw, 4rem);
+		font-size: clamp(2.6rem, 5vw, 3rem);
 	}
 }
 

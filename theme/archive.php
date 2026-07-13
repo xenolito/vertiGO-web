@@ -42,7 +42,7 @@ get_header();
 					?>
 
 					<!-- div class="header-default-bg is-bg full-width full-height" -->
-					<div class="entry-header-content layout-site-width">
+					<div class="entry-header-content">
 						<?php the_archive_title('<h1 class="page-title">', '</h1>');
 						if ($subheader) {
 						?>

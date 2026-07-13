@@ -53,6 +53,10 @@ msgstr ""
 msgid "Add or publish posts"
 msgstr ""
 
+#: template-parts/content/related_posts.php:59
+msgid "All about"
+msgstr "Todo sobre"
+
 #: inc/template-functions.php:92
 msgid "Archives:"
 msgstr ""
@@ -191,6 +195,10 @@ msgstr "minutos"
 msgid "Mobile"
 msgstr ""
 
+#: template-parts/content/related_posts.php:45
+msgid "More posts about"
+msgstr "Más entradas sobre"
+
 #: inc/template-functions.php:74
 msgctxt "monthly archives date format"
 msgid "F Y"
@@ -290,6 +298,10 @@ msgstr ""
 #: functions.php:154
 msgid "Primary Sidebar"
 msgstr ""
+
+#: archive.php:67
+msgid "Return to Blog"
+msgstr "Volver al Blog"
 
 #: 404.php:50
 msgid "Prueba otro contenido por favor."
