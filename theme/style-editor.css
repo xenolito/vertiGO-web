@@ -1408,6 +1408,11 @@ body.blog article.type-post header.entry-header .content .date, body.single-post
 body.blog article.type-post header.entry-header .content .entry-cta, body.single-post article.type-post header.entry-header .content .entry-cta, body.archive article.type-post header.entry-header .content .entry-cta, body.home article.type-post header.entry-header .content .entry-cta {
   margin-top: 1ch !important;
   width: clamp(25px, 4cqw, 40px);
+  color: var(--link-color) !important;
+}
+
+body.blog article.type-post header.entry-header .content .entry-cta *, body.single-post article.type-post header.entry-header .content .entry-cta *, body.archive article.type-post header.entry-header .content .entry-cta *, body.home article.type-post header.entry-header .content .entry-cta * {
+  color: var(--link-color) !important;
 }
 
 @container post-excerpt (width > 685px) {
@@ -1537,10 +1542,37 @@ body.single-post .date-reading-time .reading-time {
   font-size: 1.1rem;
 }
 
+/* This header never has a background image (category archives), so the
+			   global page-header h1 forced-white color from layout.css doesn't apply here. */
+
+body.archive.category #main > article > .entry-header h1 {
+  color: var(--heading-color) !important;
+}
+
+:is(:where(.dark) body.archive.category #main > article > .entry-header h1) {
+  color: var(--heading-color-dark) !important;
+}
+
+body.archive.category #main > article > .entry-header h1 {
+  text-shadow: none;
+}
+
 body.archive.category #main > article > .entry-header .entry-header-content {
   display: flex;
   flex-flow: column;
   padding-top: var(--default-section-vert-padding);
+}
+
+body.archive.category #main > article > .entry-header .entry-header-content .goback-link a {
+  display: grid;
+  grid-template-columns: min-content auto;
+  align-items: center;
+  gap: 1ch;
+}
+
+body.archive.category #main > article > .entry-header .entry-header-content .goback-link a svg {
+  order: -1;
+  rotate: 180deg;
 }
 
 section:has(> .related-posts)::after {
@@ -11245,7 +11277,7 @@ button.swiper-pagination-bullet{
   /* --bg-color-theme-A: rgb(111 127 17 / 10%); */
   --bg-color-theme-A: hsl(36, 50%, 96%);
   --heading-color-theme-A: hsl(0, 0%, 20%);
-  --txt-color-theme-A: var(var(--heading-color-theme-A));
+  --txt-color-theme-A: var(--heading-color-theme-A);
   --bg-color-theme-B: hsl(0, 0%, 20%);
   --heading-color-theme-B: white;
   --txt-color-theme-B: white;

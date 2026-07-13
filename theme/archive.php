@@ -11,6 +11,7 @@
 $post_type = get_post_type();
 $pods = function_exists('pods') ? pods($post_type, get_the_ID()) : null;
 $subheader = $pods && $pods->field('subheader') !== '' ? $pods->field('subheader') : false;
+$view_transition = false; //! Post Thumbnails will get a view-transition-name css style property with its ID.
 
 $img = (is_home() && get_option('page_for_posts')) ? wp_get_attachment_image(get_post_thumbnail_id(get_option('page_for_posts')), 'full') : false;
 $has_featured_img_cssClass = $img ? 'has-bg-img' : 'no-bg-img';
@@ -33,12 +34,6 @@ get_header();
 					<?php
 					} else {
 					?>
-						<div class="header-default-bg">
-							<?php //echo do_shortcode('[anim-bg color="#8ba939" origin="95%,90%" speed="1.5" size="1500"]');
-							?>
-							<?php //echo do_shortcode('[anim-bg color="#4e03e7" origin="95%,90%" speed="1.5" size="1500"]');
-							?>
-						</div>
 					<?php
 
 
@@ -61,28 +56,41 @@ get_header();
 				<?php
 						}
 				?>
+					<div class="goback-link">
+						<a href="<?php echo get_permalink(get_option('page_for_posts')); ?>">
+							<?php echo esc_html__('Return to Blog', 'pictau') ?>
+							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="10" fill="none" class="button-arrow-right"><path fill="currentColor" fill-rule="evenodd" d="M15.207.293 19.914 5l-4.707 4.707-1.414-1.414L16.086 6H0V4h16.086l-2.293-2.293z" clip-rule="evenodd"></path></svg>
+						</a>
+					</div>
 				<div class="header-cover-loading"></div>
 				</header><!-- .entry-header -->
 
 
 
 
-				<section class="entry-content pct-section">
+				<section class="entry-content theme-color-A">
 					<?php
-					echo do_shortcode('[category-ui]');
+					// echo do_shortcode('[category-ui]');
 					?>
+					<section class="pct-section category-entries" data-anim_any data-anim_any_delay="0.3" data-anim_any_duration="1" data-anim_any_slideamount="50">
+						<div class="entries-grid">
 				<?php
 				// Start the Loop.
 				while (have_posts()) :
 					the_post();
-					get_template_part('template-parts/content/content', 'excerpt');
+					get_template_part('template-parts/content/content', 'excerpt', array('view_transition' => $view_transition, 'thumbnail_size' => 'medium'));
 
 				// End the loop.
 				endwhile;
-
+				?>
+						</div>
+				<?php
 				// Previous/next page navigation.
 				// pictau_the_posts_navigation();
 				echo posts_navigation();
+				?>
+					</section>
+				<?php
 
 			else :
 

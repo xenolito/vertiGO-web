@@ -53,7 +53,7 @@
 
 	--bg-color-theme-A: hsl(36, 50%, 96%);
 	--heading-color-theme-A: hsl(0, 0%, 20%);
-	--txt-color-theme-A: var(var(--heading-color-theme-A));
+	--txt-color-theme-A: var(--heading-color-theme-A);
 
 	--bg-color-theme-B: hsl(0, 0%, 20%);
 	--heading-color-theme-B: white;
