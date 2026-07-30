@@ -121,6 +121,18 @@
 	}
 }
 
+/* container-type: inline-size en .card crea "style containment" (contain: style).
+   Safari sí aplica el aislamiento de contadores que exige esa contención: el
+   counter-reset del ancestro (:has) no puede atravesar el límite de cada .card,
+   así que counter(card-counter) siempre da 0 ahí ("00" en todas las tarjetas).
+   Chromium/Firefox no implementan aún ese aislamiento, por eso cuentan bien.
+   Se desactiva la contención solo en esta variante para que el contador funcione
+   también en Safari. */
+.card.heading-numbered {
+	container-type: normal;
+	container-name: none;
+}
+
 :has(> .card.heading-numbered) {
 	counter-reset: card-counter;
 

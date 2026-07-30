@@ -28,20 +28,14 @@ if (!function_exists('getPostCategoryWithMainCat')) {
 		if (null === $post_id) {
 			$post_id = get_the_ID();
 		}
-
-		// "Categoría principal" is a Pods field (pick > taxonomy > category) extending the post type.
-		if (function_exists('pods')) {
-			$pods = pods('post', $post_id);
-			$main_category = $pods ? $pods->field('categoria_principal') : false;
-
-			if ($main_category && !empty($main_category['term_id'])) {
-				$cat = get_category($main_category['term_id']);
-				if ($cat && !is_wp_error($cat)) {
-					return $cat;
-				}
+		$has_main_category = get_post_meta($post_id, '_categoria_principal', true);
+		// retrieves the main_category if exists, or the first one.
+		if ($has_main_category) {
+			$cat = get_category($has_main_category);
+			if ($cat && ! is_wp_error($cat)) {
+				return $cat;
 			}
 		}
-
 		$cats = get_the_category($post_id);
 		if (!empty($cats)) {
 			return $cats[0];

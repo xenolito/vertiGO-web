@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PICTAU THEME\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-05-25 19:17+0000\n"
-"PO-Revision-Date: 2024-05-25 19:44+0000\n"
+"PO-Revision-Date: 2024-06-11 19:26+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -40,6 +40,10 @@ msgstr ""
 msgid ", "
 msgstr ""
 
+#: 404.php:29
+msgid "404: Oh, oh..."
+msgstr ""
+
 #: inc/template-functions.php:438
 msgid "]"
 msgstr ""
@@ -48,6 +52,10 @@ msgstr ""
 #: template-parts/content/content-none.php:48
 msgid "Add or publish posts"
 msgstr ""
+
+#: template-parts/content/related_posts.php:59
+msgid "All about"
+msgstr "Todo sobre"
 
 #: inc/template-functions.php:92
 msgid "Archives:"
@@ -59,10 +67,6 @@ msgstr ""
 
 #: functions.php:177
 msgid "back"
-msgstr ""
-
-#: inc/template-functions.php:66
-msgid "Category Archives: "
 msgstr ""
 
 #: inc/template-functions.php:410
@@ -114,13 +118,20 @@ msgid "Continue reading %s"
 msgstr "Seguir leyendo %s"
 
 #. %s: Name of current post. Only visible to screen readers.
-#: template-parts/content/content-single-area.php:64
+#: template-parts/content/content-single-area.php:63
+#: template-parts/content/content-single-evento.php:30
 #, php-format
 msgid "Continue reading<span class=\"sr-only\"> \"%s\"</span>"
 msgstr "Seguir leyendo<span class=\"sr-only\"> \"%s\"</span>"
 
 #: inc/template-functions.php:76
 msgid "Daily Archives: "
+msgstr ""
+
+#: archive-webinar-ondemand.php:59
+msgid ""
+"Descubre a través de estos interesantes seminarios online cómo optimizar la "
+"gestión y productividad de tu empresa."
 msgstr ""
 
 #: inc/template-functions.php:201
@@ -176,9 +187,17 @@ msgstr ""
 msgid "MAINTENANCE MODE"
 msgstr ""
 
+#: inc/template-functions.php:1985
+msgid "minutes"
+msgstr "minutos"
+
 #: functions.php:101
 msgid "Mobile"
 msgstr ""
+
+#: template-parts/content/related_posts.php:45
+msgid "More posts about"
+msgstr "Más entradas sobre"
 
 #: inc/template-functions.php:74
 msgctxt "monthly archives date format"
@@ -191,18 +210,22 @@ msgstr ""
 
 #: inc/template-tags.php:265
 msgid "Newer posts"
-msgstr ""
+msgstr "Más recientes"
 
-#: single.php:25 single-area.php:26
+#: single-webinar-ondemand.php:26 single-area.php:26 single-evento.php:25
 msgid "Next Post"
 msgstr ""
 
-#: single.php:26 single-area.php:27
+#: single-webinar-ondemand.php:27 single-area.php:27 single-evento.php:26
 msgid "Next post:"
 msgstr ""
 
 #: template-parts/content/content-none.php:67
 msgid "No content matched your request."
+msgstr ""
+
+#: 404.php:35
+msgid "No hemos encontrado eso ¯\\_(ツ)_/¯"
 msgstr ""
 
 #. Name of the template
@@ -228,9 +251,9 @@ msgstr "Anteriores"
 msgid "One comment on &ldquo;%1$s&rdquo;"
 msgstr ""
 
-#: template-parts/content/content-single.php:76
-#: template-parts/content/content-single-area.php:77
-#: template-parts/content/content-page.php:74
+#: template-parts/content/content-single-area.php:76
+#: template-parts/content/content-single-evento.php:43
+#: template-parts/content/content-page.php:76
 #: template-parts/content/content.php:35
 #: template-parts/content/content-page-noheader.php:20
 msgid "Pages:"
@@ -244,7 +267,7 @@ msgstr ""
 msgid "pictau/pictau/theme"
 msgstr ""
 
-#: template-parts/content/content-excerpt.php:17
+#: template-parts/content/content-excerpt.php:20
 #: template-parts/content/content.php:17
 msgctxt "post"
 msgid "Featured"
@@ -260,11 +283,11 @@ msgstr ""
 msgid "Posted in"
 msgstr ""
 
-#: single.php:28 single-area.php:29
+#: single-webinar-ondemand.php:29 single-area.php:29 single-evento.php:28
 msgid "Previous Post"
 msgstr ""
 
-#: single.php:29 single-area.php:30
+#: single-webinar-ondemand.php:30 single-area.php:30 single-evento.php:29
 msgid "Previous post:"
 msgstr ""
 
@@ -276,7 +299,11 @@ msgstr ""
 msgid "Primary Sidebar"
 msgstr ""
 
-#: 404.php:28
+#: archive.php:67
+msgid "Return to Blog"
+msgstr "Volver al Blog"
+
+#: 404.php:50
 msgid "Prueba otro contenido por favor."
 msgstr ""
 
@@ -298,11 +325,17 @@ msgstr ""
 msgid "THEME CUSTOMIZER"
 msgstr ""
 
+# from -> to, timetable.
+# Example: 10:00 to 12:00h
+#: inc/template-functions.php:1690
+msgid "to"
+msgstr "a"
+
 #: functions.php:102
 msgid "Top Menu"
 msgstr ""
 
-#: 404.php:36
+#: 404.php:95
 msgid "Vover a Inicio"
 msgstr ""
 

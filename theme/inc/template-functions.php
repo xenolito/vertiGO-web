@@ -817,9 +817,10 @@ function pictau_social($atts)
 
 	$output = '<div class="social-icons">';
 
-	$output .= '<a class="social-item" href="https://www.linkedin.com/company/#" aria-label="linkedin" target="_blank"><i class="pcticon-linkedin"></i></a>';
-	$output .= '<a class="social-item" href="https://twitter.com/#" aria-label="twitter/X" target="_blank"><i class="pcticon-twitter-x"></i></a>';
-	$output .= '<a class="social-item" href="https://www.youtube.com/channel/#" aria-label="youtube" target="_blank"><i class="pcticon-youtube"></i></a>';
+	$output .= '<a class="social-item" href="https://www.linkedin.com/company/asociacion-vertigo-impulsamos/about/?viewAsMember=true" aria-label="linkedin" target="_blank"><i class="pcticon-linkedin"></i></a>';
+
+	// $output .= '<a class="social-item" href="https://twitter.com/#" aria-label="twitter/X" target="_blank"><i class="pcticon-twitter-x"></i></a>';
+	$output .= '<a class="social-item" href="https://www.instagram.com/asociacionvertigo/" aria-label="instagram" target="_blank"><i class="pcticon-instagram"></i></a>';
 
 
 	$output .= '</div>';
@@ -2439,9 +2440,30 @@ add_shortcode('image-random', 'image_random_shortcode');
 /**
  * !Functions which enhance the theme by hooking into WordPress.
  */
-// require get_template_directory() . '/inc/utilities.php';
+require get_template_directory() . '/inc/utilities.php';
 
 //! Sepeculative loading in WP 6.8+ --> disable
 // add_filter( 'wp_speculation_rules_configuration', '__return_null' );
+
+// When a category is deleted, remove stale _categoria_principal meta from its posts.
+add_action('deleted_term', function ($term_id, $tt_id, $taxonomy) {
+	if ($taxonomy !== 'category') {
+		return;
+	}
+	$post_ids = get_posts(array(
+		'post_type'   => 'post',
+		'numberposts' => -1,
+		'fields'      => 'ids',
+		'meta_query'  => array(
+			array(
+				'key'   => '_categoria_principal',
+				'value' => $term_id,
+			),
+		),
+	));
+	foreach ($post_ids as $post_id) {
+		delete_post_meta($post_id, '_categoria_principal');
+	}
+}, 10, 3);
 
 // require get_template_directory() . '/inc/catalog.php';

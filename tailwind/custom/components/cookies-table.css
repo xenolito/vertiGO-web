@@ -1,0 +1,64 @@
+/*! COOKIES POLICY TABLE */
+
+.cookies-table-wrap {
+	overflow-x: auto;
+	margin: 1.5rem 0;
+
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 0.875rem;
+		line-height: 1.5;
+
+		thead tr {
+			background-color: var(--main-color);
+			color: white;
+
+			th {
+				padding: 0.75rem 1rem;
+				text-align: left;
+				font-weight: 600;
+				white-space: nowrap;
+			}
+		}
+
+		tbody tr {
+			border-bottom: 1px solid var(--gray-200, #e5e7eb);
+
+			&:nth-child(even) {
+				background-color: var(--gray-50, #f9fafb);
+			}
+
+			td {
+				padding: 0.65rem 1rem;
+				vertical-align: top;
+
+				code {
+					font-family: ui-monospace, monospace;
+					font-size: 0.8em;
+					background: var(--gray-100, #f3f4f6);
+					padding: 0.1em 0.4em;
+					border-radius: 0.25rem;
+					white-space: nowrap;
+				}
+			}
+		}
+	}
+
+	.dark & {
+		table {
+			tbody tr {
+				border-color: var(--gray-700, #374151);
+
+				&:nth-child(even) {
+					background-color: var(--gray-800, #1f2937);
+				}
+
+				td code {
+					background: var(--gray-700, #374151);
+					color: var(--gray-200, #e5e7eb);
+				}
+			}
+		}
+	}
+}

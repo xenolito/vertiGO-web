@@ -1214,6 +1214,10 @@ body.blog #main > article header.entry-header, body.single-post #main > article 
   }
 }
 
+body.blog #main > article header.entry-header, body.single-post #main > article header.entry-header, body.archive #main > article header.entry-header, body.home #main > article header.entry-header {
+  position: relative;
+}
+
 body.blog .latest-entry, body.single-post .latest-entry, body.archive .latest-entry, body.home .latest-entry {
   padding-bottom: var(--gap-default) !important;
   padding-top: var(--gap-default) !important;
@@ -1229,6 +1233,7 @@ body.blog .latest-entries, body.single-post .latest-entries, body.archive .lates
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--gap-default);
+  padding-bottom: 0 !important;
 }
 
 @media only screen and (max-width: 980px) {
@@ -1366,6 +1371,7 @@ body.blog article.type-post header.entry-header .content .cat, body.single-post 
   z-index: 22;
   width: -moz-fit-content;
   width: fit-content;
+  margin-bottom: 1.5ch;
 }
 
 body.blog article.type-post header.entry-header .content .cat a, body.single-post article.type-post header.entry-header .content .cat a, body.archive article.type-post header.entry-header .content .cat a, body.home article.type-post header.entry-header .content .cat a {
@@ -1878,6 +1884,18 @@ body.single-post .color-swatch-grid .color-swatch-item .swatch-name {
   margin-top: 0.25rem;
 }
 
+/*! [blog_section] shortcode wrapper, when placed on the site's front page */
+
+body.home .blog-section {
+  padding-top: calc(var(--default-section-vert-padding) * 0.5) !important;
+}
+
+body.home .blog-section,
+	body.home .blog-section > .pct-section {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
 .wp-block-buttons {
   /* gap: 2rem; */
   /* margin-top: 2rem; */
@@ -2234,6 +2252,19 @@ a.bt-inline::before {
 .card.full-width > figure.alignfull {
   width: 100%;
   max-width: unset !important;
+}
+
+/* container-type: inline-size en .card crea "style containment" (contain: style).
+   Safari sí aplica el aislamiento de contadores que exige esa contención: el
+   counter-reset del ancestro (:has) no puede atravesar el límite de cada .card,
+   así que counter(card-counter) siempre da 0 ahí ("00" en todas las tarjetas).
+   Chromium/Firefox no implementan aún ese aislamiento, por eso cuentan bien.
+   Se desactiva la contención solo en esta variante para que el contador funcione
+   también en Safari. */
+
+.card.heading-numbered {
+  container-type: normal;
+  container-name: none;
 }
 
 :has(> .card.heading-numbered) {
@@ -2868,6 +2899,67 @@ a.bt-inline::before {
   background-clip: unset;
   -webkit-text-fill-color: unset;
   font-size: 1.5em;
+}
+
+/*! COOKIES POLICY TABLE */
+
+.cookies-table-wrap {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.cookies-table-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.cookies-table-wrap table thead tr {
+  background-color: var(--main-color);
+  color: white;
+}
+
+.cookies-table-wrap table thead tr th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.cookies-table-wrap table tbody tr {
+  border-bottom: 1px solid var(--gray-200, #e5e7eb);
+}
+
+.cookies-table-wrap table tbody tr:nth-child(even) {
+  background-color: var(--gray-50, #f9fafb);
+}
+
+.cookies-table-wrap table tbody tr td {
+  padding: 0.65rem 1rem;
+  vertical-align: top;
+}
+
+.cookies-table-wrap table tbody tr td code {
+  font-family: ui-monospace, monospace;
+  font-size: 0.8em;
+  background: var(--gray-100, #f3f4f6);
+  padding: 0.1em 0.4em;
+  border-radius: 0.25rem;
+  white-space: nowrap;
+}
+
+.dark .cookies-table-wrap table tbody tr {
+  border-color: var(--gray-700, #374151);
+}
+
+.dark .cookies-table-wrap table tbody tr:nth-child(even) {
+  background-color: var(--gray-800, #1f2937);
+}
+
+.dark .cookies-table-wrap table tbody tr td code {
+  background: var(--gray-700, #374151);
+  color: var(--gray-200, #e5e7eb);
 }
 
 :root {
@@ -11246,6 +11338,12 @@ button.swiper-pagination-bullet{
   justify-content: center;
 }
 
+/*! HIDE SOCIAL ICONS UNTIL READY FROM CUSTOMER */
+
+/* .social-icons {
+	display: none;
+} */
+
 /**
  * Custom styles to immediately follow Tailwind’s `components` layer
  *
@@ -11752,6 +11850,10 @@ body {
 
 .relative {
   position: relative;
+}
+
+.sticky {
+  position: sticky;
 }
 
 .isolate {
